@@ -1,0 +1,1483 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8">
+  <title>Golden Beach Guest House | Reservas</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-dark: #2C3E50;
+      --secondary-dark: #34495E;
+      --accent-blue: #2980B9;
+      --accent-yellow: #D4A843;
+      --accent-color: #95A5A6;
+      --light-gray: #ECF0F1;
+      --ultra-light: #F8F9FA;
+      --white: #FFFFFF;
+      --text-dark: #2C3E50;
+      --text-light: #7F8C8D;
+      --border-color: #E0E0E0;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      overflow-x: hidden;
+      background: var(--ultra-light);
+    }
+
+    /* === VÍDEOS DE FUNDO === */
+    .bg-video {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      z-index: -2;
+      opacity: 0;
+      transition: opacity 2s ease-in-out;
+    }
+    .bg-video.active { opacity: 1; }
+
+    .overlay {
+      position: relative;
+      min-height: 100vh;
+      background: linear-gradient(135deg, rgba(44,62,80,0.82), rgba(52,73,94,0.72));
+      backdrop-filter: blur(3px);
+      padding-top: 90px;
+      padding-bottom: 50px;
+    }
+
+    /* === NAVBAR === */
+    .navbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      background: rgba(44,62,80,0.97);
+      padding: 18px 50px;
+      z-index: 1000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      backdrop-filter: blur(15px);
+      box-shadow: 0 2px 15px rgba(0,0,0,0.3);
+    }
+    .navbar-left {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .navbar-logo {
+      max-width: 120px;
+      height: auto;
+    }
+    .navbar h2 { display: none; }
+    .navbar-right {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+    .language-selector {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    .language-selector span {
+      color: rgba(255,255,255,0.9);
+      font-size: 0.8rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .language-buttons { display: flex; gap: 8px; }
+    .language-toggle {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      opacity: 0.8;
+      transition: all 0.3s;
+    }
+    .language-toggle img {
+      width: 44px;
+      height: 30px;
+      border-radius: 4px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      display: block;
+    }
+    .language-toggle:hover { transform: scale(1.1); opacity: 1; }
+    .navbar a {
+      color: var(--white);
+      text-decoration: none;
+      background: var(--accent-blue);
+      padding: 10px 22px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      transition: all 0.3s;
+    }
+    .navbar a:hover {
+      background: var(--accent-yellow);
+      transform: translateY(-2px);
+    }
+
+    /* === CONTAINER === */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 30px 20px;
+    }
+
+    /* === HEADER === */
+    .booking-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .booking-header h1 {
+      color: var(--white);
+      font-size: 2.8rem;
+      font-weight: 800;
+      letter-spacing: 3px;
+      text-shadow: 3px 3px 6px rgba(0,0,0,0.4);
+      margin-bottom: 10px;
+    }
+    .booking-header p {
+      color: rgba(255,255,255,0.9);
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+
+    /* === STEP INDICATORS === */
+    .steps {
+      display: flex;
+      justify-content: center;
+      gap: 0;
+      margin-bottom: 40px;
+    }
+    .step {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 25px;
+      background: rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.6);
+      font-weight: 700;
+      font-size: 0.9rem;
+      letter-spacing: 1px;
+      transition: all 0.3s;
+    }
+    .step:first-child { border-radius: 50px 0 0 50px; }
+    .step:last-child { border-radius: 0 50px 50px 0; }
+    .step.active {
+      background: var(--accent-blue);
+      color: var(--white);
+    }
+    .step.completed {
+      background: var(--accent-yellow);
+      color: var(--white);
+    }
+    .step-number {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      font-weight: 800;
+    }
+    .step.active .step-number,
+    .step.completed .step-number {
+      background: rgba(255,255,255,0.3);
+    }
+
+    /* === SECTIONS === */
+    .booking-section {
+      background: rgba(255,255,255,0.98);
+      border-radius: 20px;
+      padding: 40px;
+      margin-bottom: 30px;
+      box-shadow: 0 15px 50px rgba(0,0,0,0.3);
+      border-top: 4px solid var(--accent-blue);
+    }
+    .section-heading {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+      margin-bottom: 25px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .section-heading i {
+      color: var(--accent-blue);
+      font-size: 1.4rem;
+    }
+
+    /* === CALENDAR === */
+    .calendar-wrapper {
+      display: flex;
+      gap: 30px;
+      flex-wrap: wrap;
+    }
+    .calendar-box {
+      flex: 1;
+      min-width: 300px;
+    }
+    .calendar-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    .calendar-nav button {
+      background: var(--accent-blue);
+      color: white;
+      border: none;
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .calendar-nav button:hover { background: var(--accent-yellow); }
+    .calendar-nav h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+    }
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+    }
+    .cal-header {
+      text-align: center;
+      font-weight: 700;
+      font-size: 0.75rem;
+      color: var(--accent-blue);
+      padding: 8px 0;
+      text-transform: uppercase;
+    }
+    .cal-day {
+      text-align: center;
+      padding: 10px 4px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+    }
+    .cal-day:hover:not(.disabled):not(.other-month) {
+      background: var(--light-gray);
+    }
+    .cal-day.other-month {
+      color: #ccc;
+      cursor: default;
+    }
+    .cal-day.disabled {
+      color: #ddd;
+      cursor: not-allowed;
+      text-decoration: line-through;
+    }
+    .cal-day.blocked {
+      background: rgba(231,76,60,0.15);
+      color: #E74C3C;
+      cursor: not-allowed;
+      position: relative;
+    }
+    .cal-day.blocked::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 15%;
+      right: 15%;
+      height: 2px;
+      background: #E74C3C;
+      transform: translateY(-50%);
+    }
+    .cal-day.today {
+      font-weight: 800;
+      color: var(--accent-blue);
+    }
+    .cal-day.check-in {
+      background: var(--accent-blue);
+      color: white;
+      border-radius: 8px 0 0 8px;
+      font-weight: 700;
+    }
+    .cal-day.check-out {
+      background: var(--accent-blue);
+      color: white;
+      border-radius: 0 8px 8px 0;
+      font-weight: 700;
+    }
+    .cal-day.in-range {
+      background: rgba(41,128,185,0.15);
+      border-radius: 0;
+    }
+    .cal-day.check-in.check-out {
+      border-radius: 8px;
+    }
+    .date-label {
+      font-size: 0.6rem;
+      font-weight: 700;
+      display: block;
+      margin-top: 2px;
+      letter-spacing: 0.5px;
+    }
+
+    /* Date summary bar */
+    .date-summary {
+      display: flex;
+      gap: 20px;
+      margin-top: 20px;
+      padding: 18px 25px;
+      background: var(--ultra-light);
+      border-radius: 12px;
+      border: 2px solid var(--border-color);
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .date-summary-item {
+      flex: 1;
+      min-width: 140px;
+    }
+    .date-summary-item label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-light);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 5px;
+    }
+    .date-summary-item .value {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+    }
+    .date-summary-item .value.empty {
+      color: var(--text-light);
+    }
+
+    /* TIME SELECTORS */
+    .time-selectors {
+      display: flex;
+      gap: 20px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+    .time-group {
+      flex: 1;
+      min-width: 200px;
+    }
+    .time-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
+    }
+    .time-group select {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 10px;
+      border: 2px solid var(--border-color);
+      font-size: 1rem;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 500;
+      color: var(--text-dark);
+      cursor: pointer;
+      appearance: none;
+      background: var(--white) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%232C3E50' d='M6 9L1 4h10z'/%3E%3C/svg%3E") no-repeat right 16px center;
+      transition: all 0.3s;
+    }
+    .time-group select:focus {
+      outline: none;
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 3px rgba(41,128,185,0.15);
+    }
+
+    /* === ROOM TYPE SECTION === */
+    .room-type-section {
+      margin-bottom: 35px;
+    }
+    .room-type-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 3px solid var(--accent-yellow);
+      display: inline-block;
+    }
+    .room-type-title i {
+      color: var(--accent-yellow);
+      margin-right: 8px;
+    }
+    .rooms-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 25px;
+    }
+    .room-card {
+      background: var(--white);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      transition: all 0.3s;
+      cursor: pointer;
+      border: 3px solid transparent;
+    }
+    .room-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 35px rgba(0,0,0,0.15);
+    }
+    .room-card.selected {
+      border-color: var(--accent-blue);
+      box-shadow: 0 10px 35px rgba(41,128,185,0.25);
+    }
+    .room-card.selected .room-select-badge {
+      display: flex;
+    }
+    .room-image-container {
+      width: 100%;
+      height: 200px;
+      overflow: hidden;
+      position: relative;
+    }
+    .room-image-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s;
+    }
+    .room-card:hover .room-image-container img {
+      transform: scale(1.05);
+    }
+    .room-select-badge {
+      display: none;
+      position: absolute;
+      top: 12px; right: 12px;
+      background: var(--accent-blue);
+      color: white;
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+    }
+    .room-type-badge {
+      position: absolute;
+      top: 12px; left: 12px;
+      background: var(--primary-dark);
+      color: white;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .room-content {
+      padding: 20px;
+    }
+    .room-name {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+      margin-bottom: 8px;
+    }
+    .room-features {
+      list-style: none;
+      margin-bottom: 12px;
+    }
+    .room-features li {
+      padding: 4px 0;
+      color: var(--text-light);
+      font-size: 0.85rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .room-features li i {
+      color: var(--accent-blue);
+      width: 16px;
+      font-size: 0.8rem;
+    }
+    .room-description {
+      font-size: 0.85rem;
+      color: var(--text-light);
+      line-height: 1.6;
+      margin-bottom: 12px;
+      font-style: italic;
+    }
+    .room-price {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--accent-blue);
+      margin-top: 8px;
+    }
+    .room-price span {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text-light);
+    }
+    .room-card.occupied {
+      opacity: 0.5;
+      pointer-events: none;
+      position: relative;
+    }
+    .room-card.occupied::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(231,76,60,0.15);
+      border-radius: 16px;
+      z-index: 10;
+    }
+    .occupied-badge {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: var(--danger, #E74C3C);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      z-index: 11;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    /* === GUEST FORM === */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--primary-dark);
+      letter-spacing: 0.5px;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 10px;
+      border: 2px solid var(--border-color);
+      font-size: 1rem;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 500;
+      color: var(--text-dark);
+      transition: all 0.3s;
+    }
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 3px rgba(41,128,185,0.15);
+    }
+
+    /* === SUMMARY === */
+    .booking-summary {
+      background: var(--ultra-light);
+      padding: 25px;
+      border-radius: 12px;
+      border: 2px solid var(--border-color);
+      margin-bottom: 25px;
+    }
+    .summary-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+      margin-bottom: 15px;
+    }
+    .summary-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border-color);
+      font-size: 0.95rem;
+    }
+    .summary-item:last-child {
+      border-bottom: none;
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--accent-blue);
+      padding-top: 15px;
+      margin-top: 10px;
+      border-top: 2px solid var(--accent-blue);
+    }
+    .summary-label { font-weight: 600; color: var(--text-dark); }
+    .summary-value { font-weight: 700; color: var(--primary-dark); }
+
+    /* === EXTRAS === */
+    .extras-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 12px;
+    }
+    .extra-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px;
+      background: white;
+      border-radius: 10px;
+      border: 2px solid var(--border-color);
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+    .extra-item:hover { border-color: var(--accent-blue); }
+    .extra-item input[type="checkbox"] {
+      width: 20px; height: 20px;
+      accent-color: var(--accent-blue);
+      cursor: pointer;
+    }
+    .extra-name {
+      font-weight: 600;
+      color: var(--primary-dark);
+      font-size: 0.9rem;
+    }
+    .extra-price {
+      font-size: 0.8rem;
+      color: var(--text-light);
+      font-weight: 600;
+    }
+
+    /* === SUBMIT === */
+    .btn-booking {
+      width: 100%;
+      padding: 18px;
+      background: var(--accent-blue);
+      color: var(--white);
+      border: none;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: 800;
+      cursor: pointer;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      font-family: 'Montserrat', sans-serif;
+      transition: all 0.3s;
+      box-shadow: 0 4px 15px rgba(41,128,185,0.3);
+    }
+    .btn-booking:hover {
+      background: var(--accent-yellow);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(212,168,67,0.3);
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .navbar { padding: 15px 20px; }
+      .navbar-logo { max-width: 60px; }
+      .booking-header h1 { font-size: 1.8rem; }
+      .booking-section { padding: 25px 20px; }
+      .steps { flex-direction: column; align-items: center; }
+      .step { border-radius: 8px !important; width: 100%; justify-content: center; }
+      .calendar-wrapper { flex-direction: column; }
+      .rooms-grid { grid-template-columns: 1fr; }
+      .form-grid { grid-template-columns: 1fr; }
+      .date-summary { flex-direction: column; gap: 12px; }
+    }
+    @media (max-width: 480px) {
+      .navbar { padding: 12px 15px; }
+      .language-selector span { display: none; }
+      .booking-header h1 { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Vídeos de fundo -->
+  <video class="bg-video active" autoplay muted loop playsinline>
+    <source src="video/Hotel_vid1.mp4" type="video/mp4">
+  </video>
+  <video class="bg-video" autoplay muted loop playsinline>
+    <source src="video/Hotel_vid2.mp4" type="video/mp4">
+  </video>
+  <video class="bg-video" autoplay muted loop playsinline>
+    <source src="video/Hotel_vid3.mp4" type="video/mp4">
+  </video>
+
+  <!-- Navbar -->
+  <div class="navbar">
+    <div class="navbar-left">
+      <img src="img/logo.png" alt="Logo" class="navbar-logo">
+      <h2>GOLDEN BEACH</h2>
+    </div>
+    <div class="navbar-right">
+      <div class="language-selector">
+        <span data-i18n="lang-label">Idioma</span>
+        <div class="language-buttons">
+          <button class="language-toggle" id="langBtnPt" title="Português">
+            <img src="img/Pt.png" alt="Português">
+          </button>
+          <button class="language-toggle" id="langBtnEn" title="English">
+            <img src="img/Uk.png" alt="English">
+          </button>
+        </div>
+      </div>
+      <a href="home.html" data-i18n="navbar-home">Início</a>
+      <a href="index.html" data-i18n="navbar-self-checkin">Check-in</a>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="overlay">
+    <div class="container">
+
+      <div class="booking-header">
+        <h1 data-i18n="booking-h1">Reservar</h1>
+        <p data-i18n="booking-subtitle">Escolha o seu quarto e garanta a sua estadia</p>
+      </div>
+
+      <!-- Steps -->
+      <div class="steps">
+        <div class="step active" id="step1Indicator">
+          <span class="step-number">1</span>
+          <span data-i18n="step-dates">Datas</span>
+        </div>
+        <div class="step" id="step2Indicator">
+          <span class="step-number">2</span>
+          <span data-i18n="step-room">Quarto</span>
+        </div>
+        <div class="step" id="step3Indicator">
+          <span class="step-number">3</span>
+          <span data-i18n="step-details">Detalhes</span>
+        </div>
+      </div>
+
+      <form id="bookingForm">
+
+        <!-- STEP 1: Calendar -->
+        <div class="booking-section" id="sectionDates">
+          <h2 class="section-heading">
+            <i class="fas fa-calendar-alt"></i>
+            <span data-i18n="section-select-dates">Selecione as Datas</span>
+          </h2>
+
+          <div class="calendar-wrapper">
+            <div class="calendar-box" id="calendarMonth1"></div>
+            <div class="calendar-box" id="calendarMonth2"></div>
+          </div>
+
+          <div class="date-summary">
+            <div class="date-summary-item">
+              <label>Check-in</label>
+              <div class="value empty" id="checkinDisplay" data-i18n="select-date-placeholder">Selecione no calendário</div>
+            </div>
+            <div class="date-summary-item">
+              <label>Check-out</label>
+              <div class="value empty" id="checkoutDisplay" data-i18n="select-date-placeholder">Selecione no calendário</div>
+            </div>
+            <div class="date-summary-item">
+              <label data-i18n="label-nights">Noites</label>
+              <div class="value" id="nightsDisplay">0</div>
+            </div>
+          </div>
+
+          <div class="time-selectors">
+            <div class="time-group">
+              <label data-i18n="label-checkin-time"><i class="fas fa-clock"></i> Hora de Check-in</label>
+              <select id="checkinTime">
+                <option value="14:00">14:00</option>
+                <option value="15:00" selected>15:00</option>
+                <option value="16:00">16:00</option>
+                <option value="17:00">17:00</option>
+                <option value="18:00">18:00</option>
+                <option value="19:00">19:00</option>
+                <option value="20:00">20:00</option>
+                <option value="21:00">21:00</option>
+                <option value="22:00">22:00</option>
+                <option value="23:00">23:00</option>
+                <option value="00:00">00:00</option>
+              </select>
+            </div>
+            <div class="time-group">
+              <label data-i18n="label-checkout-time"><i class="fas fa-clock"></i> Hora de Check-out</label>
+              <select id="checkoutTime">
+                <option value="08:00">08:00</option>
+                <option value="09:00">09:00</option>
+                <option value="10:00">10:00</option>
+                <option value="11:00" selected>11:00</option>
+                <option value="12:00">12:00</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 2: Room Selection -->
+        <div class="booking-section" id="sectionRooms">
+          <h2 class="section-heading">
+            <i class="fas fa-bed"></i>
+            <span data-i18n="section-select-room">Escolha o Quarto</span>
+          </h2>
+
+          <!-- Twin Rooms -->
+          <div class="room-type-section">
+            <div class="room-type-title">
+              <i class="fas fa-bed"></i> <span data-i18n="room-type-twin">Quartos Twin</span>
+            </div>
+            <div class="rooms-grid">
+
+              <div class="room-card" data-room="Quarto Castelo Twin" data-type="twin" data-price="45" onclick="selectRoom(this)">
+                <div class="room-image-container">
+                  <img src="img/QuartoCasteloTwin.png" alt="Quarto Castelo Twin">
+                  <span class="room-type-badge">Twin</span>
+                  <span class="room-select-badge"><i class="fas fa-check"></i></span>
+                </div>
+                <div class="room-content">
+                  <h3 class="room-name">Quarto Castelo</h3>
+                  <p class="room-description">Quarto acolhedor com vista para o castelo, decoração temática e ambiente tranquilo.</p>
+                  <ul class="room-features">
+                    <li><i class="fas fa-users"></i> 2 <span data-i18n="people">pessoas</span></li>
+                    <li><i class="fas fa-bed"></i> 2 <span data-i18n="single-beds">camas individuais</span></li>
+                    <li><i class="fas fa-wifi"></i> Wi-Fi</li>
+                    <li><i class="fas fa-shower"></i> <span data-i18n="private-bath">Casa de banho privada</span></li>
+                  </ul>
+                  <div class="room-price">45€ <span>/ noite</span></div>
+                </div>
+              </div>
+
+              <div class="room-card" data-room="Quarto Cavacos Twin" data-type="twin" data-price="42" onclick="selectRoom(this)">
+                <div class="room-image-container">
+                  <img src="img/QuartoCavacosTwin.png" alt="Quarto Cavacos Twin">
+                  <span class="room-type-badge">Twin</span>
+                  <span class="room-select-badge"><i class="fas fa-check"></i></span>
+                </div>
+                <div class="room-content">
+                  <h3 class="room-name">Quarto Cavacos</h3>
+                  <p class="room-description">Inspirado na Praia dos Cavacos, com tons de azul e branco e muita luz natural.</p>
+                  <ul class="room-features">
+                    <li><i class="fas fa-users"></i> 2 <span data-i18n="people">pessoas</span></li>
+                    <li><i class="fas fa-bed"></i> 2 <span data-i18n="single-beds">camas individuais</span></li>
+                    <li><i class="fas fa-wifi"></i> Wi-Fi</li>
+                    <li><i class="fas fa-shower"></i> <span data-i18n="private-bath">Casa de banho privada</span></li>
+                  </ul>
+                  <div class="room-price">42€ <span>/ noite</span></div>
+                </div>
+              </div>
+
+              <div class="room-card" data-room="Quarto Manta Rota Twin" data-type="twin" data-price="40" onclick="selectRoom(this)">
+                <div class="room-image-container">
+                  <img src="img/QuartoMantaRotaTwin.png" alt="Quarto Manta Rota Twin">
+                  <span class="room-type-badge">Twin</span>
+                  <span class="room-select-badge"><i class="fas fa-check"></i></span>
+                </div>
+                <div class="room-content">
+                  <h3 class="room-name">Quarto Manta Rota</h3>
+                  <p class="room-description">Ambiente praiano com decoração inspirada na famosa Praia da Manta Rota.</p>
+                  <ul class="room-features">
+                    <li><i class="fas fa-users"></i> 2 <span data-i18n="people">pessoas</span></li>
+                    <li><i class="fas fa-bed"></i> 2 <span data-i18n="single-beds">camas individuais</span></li>
+                    <li><i class="fas fa-wifi"></i> Wi-Fi</li>
+                    <li><i class="fas fa-shower"></i> <span data-i18n="private-bath">Casa de banho privada</span></li>
+                  </ul>
+                  <div class="room-price">40€ <span>/ noite</span></div>
+                </div>
+              </div>
+
+              <div class="room-card" data-room="Quarto Marinha Twin" data-type="twin" data-price="44" onclick="selectRoom(this)">
+                <div class="room-image-container">
+                  <img src="img/QuartoMarinhaTwin.png" alt="Quarto Marinha Twin">
+                  <span class="room-type-badge">Twin</span>
+                  <span class="room-select-badge"><i class="fas fa-check"></i></span>
+                </div>
+                <div class="room-content">
+                  <h3 class="room-name">Quarto Marinha</h3>
+                  <p class="room-description">Inspirado na Praia da Marinha, com tons dourados e conforto à beira-mar.</p>
+                  <ul class="room-features">
+                    <li><i class="fas fa-users"></i> 2 <span data-i18n="people">pessoas</span></li>
+                    <li><i class="fas fa-bed"></i> 2 <span data-i18n="single-beds">camas individuais</span></li>
+                    <li><i class="fas fa-wifi"></i> Wi-Fi</li>
+                    <li><i class="fas fa-shower"></i> <span data-i18n="private-bath">Casa de banho privada</span></li>
+                  </ul>
+                  <div class="room-price">44€ <span>/ noite</span></div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Double Rooms -->
+          <div class="room-type-section">
+            <div class="room-type-title">
+              <i class="fas fa-bed"></i> <span data-i18n="room-type-double">Quartos Duplo</span>
+            </div>
+            <div class="rooms-grid">
+
+              <div class="room-card" data-room="Quarto Alvor Duplo" data-type="duplo" data-price="55" onclick="selectRoom(this)">
+                <div class="room-image-container">
+                  <img src="img/QuartoAlvorDuplo.png" alt="Quarto Alvor Duplo">
+                  <span class="room-type-badge">Duplo</span>
+                  <span class="room-select-badge"><i class="fas fa-check"></i></span>
+                </div>
+                <div class="room-content">
+                  <h3 class="room-name">Quarto Alvor</h3>
+                  <p class="room-description">Quarto duplo espaçoso com vista e decoração inspirada na vila de Alvor.</p>
+                  <ul class="room-features">
+                    <li><i class="fas fa-users"></i> 2 <span data-i18n="people">pessoas</span></li>
+                    <li><i class="fas fa-bed"></i> <span data-i18n="double-bed">Cama de casal</span></li>
+                    <li><i class="fas fa-wifi"></i> Wi-Fi</li>
+                    <li><i class="fas fa-shower"></i> <span data-i18n="private-bath">Casa de banho privada</span></li>
+                  </ul>
+                  <div class="room-price">55€ <span>/ noite</span></div>
+                </div>
+              </div>
+
+              <div class="room-card" data-room="Quarto Benagil Duplo" data-type="duplo" data-price="58" onclick="selectRoom(this)">
+                <div class="room-image-container">
+                  <img src="img/QuartoBenagilDuplo.png" alt="Quarto Benagil Duplo">
+                  <span class="room-type-badge">Duplo</span>
+                  <span class="room-select-badge"><i class="fas fa-check"></i></span>
+                </div>
+                <div class="room-content">
+                  <h3 class="room-name">Quarto Benagil</h3>
+                  <p class="room-description">Inspirado na gruta de Benagil, com tons naturais e ambiente relaxante.</p>
+                  <ul class="room-features">
+                    <li><i class="fas fa-users"></i> 2 <span data-i18n="people">pessoas</span></li>
+                    <li><i class="fas fa-bed"></i> <span data-i18n="double-bed">Cama de casal</span></li>
+                    <li><i class="fas fa-wifi"></i> Wi-Fi</li>
+                    <li><i class="fas fa-shower"></i> <span data-i18n="private-bath">Casa de banho privada</span></li>
+                  </ul>
+                  <div class="room-price">58€ <span>/ noite</span></div>
+                </div>
+              </div>
+
+              <div class="room-card" data-room="Quarto Ilha da Fuseta Duplo" data-type="duplo" data-price="52" onclick="selectRoom(this)">
+                <div class="room-image-container">
+                  <img src="img/QuartoIlhaFusetaDuplo.png" alt="Quarto Ilha da Fuseta Duplo">
+                  <span class="room-type-badge">Duplo</span>
+                  <span class="room-select-badge"><i class="fas fa-check"></i></span>
+                </div>
+                <div class="room-content">
+                  <h3 class="room-name">Quarto Ilha da Fuseta</h3>
+                  <p class="room-description">Decoração costeira inspirada na Ilha da Fuseta, perfeito para relaxar.</p>
+                  <ul class="room-features">
+                    <li><i class="fas fa-users"></i> 2 <span data-i18n="people">pessoas</span></li>
+                    <li><i class="fas fa-bed"></i> <span data-i18n="double-bed">Cama de casal</span></li>
+                    <li><i class="fas fa-wifi"></i> Wi-Fi</li>
+                    <li><i class="fas fa-shower"></i> <span data-i18n="private-bath">Casa de banho privada</span></li>
+                  </ul>
+                  <div class="room-price">52€ <span>/ noite</span></div>
+                </div>
+              </div>
+
+              <div class="room-card" data-room="Quarto Trafal Duplo" data-type="duplo" data-price="50" onclick="selectRoom(this)">
+                <div class="room-image-container">
+                  <img src="img/QuartoTrafalDuplo.png" alt="Quarto Trafal Duplo">
+                  <span class="room-type-badge">Duplo</span>
+                  <span class="room-select-badge"><i class="fas fa-check"></i></span>
+                </div>
+                <div class="room-content">
+                  <h3 class="room-name">Quarto Trafal</h3>
+                  <p class="room-description">Quarto confortável com temática da Praia do Trafal e tons quentes.</p>
+                  <ul class="room-features">
+                    <li><i class="fas fa-users"></i> 2 <span data-i18n="people">pessoas</span></li>
+                    <li><i class="fas fa-bed"></i> <span data-i18n="double-bed">Cama de casal</span></li>
+                    <li><i class="fas fa-wifi"></i> Wi-Fi</li>
+                    <li><i class="fas fa-shower"></i> <span data-i18n="private-bath">Casa de banho privada</span></li>
+                  </ul>
+                  <div class="room-price">50€ <span>/ noite</span></div>
+                </div>
+              </div>
+
+              <div class="room-card" data-room="Quarto Três Irmãos Duplo" data-type="duplo" data-price="60" onclick="selectRoom(this)">
+                <div class="room-image-container">
+                  <img src="img/QuartoTresIrmaosDuplo.png" alt="Quarto Três Irmãos Duplo">
+                  <span class="room-type-badge">Duplo</span>
+                  <span class="room-select-badge"><i class="fas fa-check"></i></span>
+                </div>
+                <div class="room-content">
+                  <h3 class="room-name">Quarto Três Irmãos</h3>
+                  <p class="room-description">O nosso quarto premium, inspirado na icónica Praia dos Três Irmãos.</p>
+                  <ul class="room-features">
+                    <li><i class="fas fa-users"></i> 2 <span data-i18n="people">pessoas</span></li>
+                    <li><i class="fas fa-bed"></i> <span data-i18n="double-bed">Cama de casal</span></li>
+                    <li><i class="fas fa-wifi"></i> Wi-Fi</li>
+                    <li><i class="fas fa-shower"></i> <span data-i18n="private-bath">Casa de banho privada</span></li>
+                  </ul>
+                  <div class="room-price">60€ <span>/ noite</span></div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 3: Guest Details & Summary -->
+        <div class="booking-section" id="sectionDetails">
+          <h2 class="section-heading">
+            <i class="fas fa-user"></i>
+            <span data-i18n="booking-form-title">Detalhes da Reserva</span>
+          </h2>
+
+          <div style="background: rgba(41,128,185,0.1); border-left: 4px solid #2980B9; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
+            <p style="margin: 0; color: var(--primary-dark); font-size: 0.9rem; font-weight: 500;">
+              <i class="fas fa-info-circle"></i> <span data-i18n="booking-login-info">Utilize as mesmas credenciais que usou na criação da conta (Nome, Sobrenome e Palavra-passe)</span>
+            </p>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label data-i18n="register-firstname">Nome *</label>
+              <input type="text" id="firstName" name="firstName" required>
+            </div>
+            <div class="form-group">
+              <label data-i18n="register-lastname">Sobrenome *</label>
+              <input type="text" id="lastName" name="lastName" required>
+            </div>
+            <div class="form-group">
+              <label data-i18n="register-password">Palavra-passe *</label>
+              <input type="password" id="bookingPassword" name="bookingPassword" required>
+            </div>
+            <div class="form-group">
+              <label data-i18n="register-email">Email *</label>
+              <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+              <label data-i18n="label-cc-booking">Cartão de Cidadão *</label>
+              <input type="text" id="cc" name="cc" required>
+            </div>
+            <div class="form-group">
+              <label data-i18n="label-phone-booking">Telefone *</label>
+              <input type="tel" id="phone" name="phone" required>
+            </div>
+          </div>
+
+          <!-- Extras -->
+          <div style="margin-top: 25px;">
+            <h3 class="section-heading" style="font-size: 1.2rem;">
+              <i class="fas fa-concierge-bell"></i>
+              <span data-i18n="extras-title">Extras & Serviços</span>
+            </h3>
+            <div class="extras-grid">
+              <label class="extra-item">
+                <input type="checkbox" name="extra-breakfast" value="8">
+                <div>
+                  <div class="extra-name" data-i18n="extra-breakfast">Pequeno-almoço</div>
+                  <div class="extra-price">+8€ /<span data-i18n="per-person-day">pessoa/dia</span></div>
+                </div>
+              </label>
+              <label class="extra-item">
+                <input type="checkbox" name="extra-parking" value="5">
+                <div>
+                  <div class="extra-name" data-i18n="extra-parking">Estacionamento privado</div>
+                  <div class="extra-price">+5€ /<span data-i18n="per-day">dia</span></div>
+                </div>
+              </label>
+              <label class="extra-item">
+                <input type="checkbox" name="extra-airport" value="15">
+                <div>
+                  <div class="extra-name" data-i18n="extra-airport">Transfer aeroporto</div>
+                  <div class="extra-price">+15€ /<span data-i18n="per-trip">viagem</span></div>
+                </div>
+              </label>
+              <label class="extra-item">
+                <input type="checkbox" name="extra-late-checkout" value="10">
+                <div>
+                  <div class="extra-name" data-i18n="extra-late-checkout">Late check-out (até 14h)</div>
+                  <div class="extra-price">+10€</div>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Summary -->
+          <div class="booking-summary" style="margin-top: 25px;">
+            <h3 class="summary-title" data-i18n="summary-title">Resumo da Reserva</h3>
+            <div class="summary-item">
+              <span class="summary-label" data-i18n="summary-room">Quarto:</span>
+              <span class="summary-value" id="summaryRoom">-</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Check-in:</span>
+              <span class="summary-value" id="summaryCheckin">-</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Check-out:</span>
+              <span class="summary-value" id="summaryCheckout">-</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label" data-i18n="summary-nights">Noites:</span>
+              <span class="summary-value" id="summaryNights">0</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label" data-i18n="summary-extras">Extras:</span>
+              <span class="summary-value" id="summaryExtras">0€</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label" data-i18n="summary-total">Total:</span>
+              <span class="summary-value" id="summaryTotal">0€</span>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-booking" data-i18n="btn-booking">Proceder ao Pagamento</button>
+        </div>
+
+        <!-- Hidden fields for form data -->
+        <input type="hidden" id="entrada" name="entrada">
+        <input type="hidden" id="saida" name="saida">
+        <input type="hidden" id="quarto" name="quarto">
+      </form>
+
+    </div>
+  </div>
+
+  <script type="module" src="js/booking.js"></script>
+  <script type="module">
+    import { db } from "./js/firebase.js";
+    import { collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+    // ====== GLOBAL STATE ======
+    let checkinDate = null;
+    let checkoutDate = null;
+    let selectingCheckout = false;
+    let currentMonth1 = new Date();
+    let currentMonth2 = new Date();
+    currentMonth2.setMonth(currentMonth2.getMonth() + 1);
+    let selectedRoom = null;
+    let blockedData = []; // { data_inicio, data_fim, quartos[] }
+    let activeReservations = []; // { room_id, data_entrada, data_saida }
+
+    const lang = localStorage.getItem("language") || "pt";
+    const monthNames = lang === "pt"
+      ? ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"]
+      : ["January","February","March","April","May","June","July","August","September","October","November","December"];
+    const dayNames = lang === "pt"
+      ? ["Seg","Ter","Qua","Qui","Sex","Sáb","Dom"]
+      : ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+
+    // ====== LOAD BLOCKED DATES AND RESERVATIONS ======
+    async function loadBlocksAndReservations() {
+      try {
+        const bloqueiosSnap = await getDocs(collection(db, "bloqueios"));
+        blockedData = [];
+        bloqueiosSnap.forEach(d => blockedData.push(d.data()));
+
+        const reservasSnap = await getDocs(query(collection(db, "reservas"), where("status", "==", "ativa")));
+        activeReservations = [];
+        reservasSnap.forEach(d => {
+          const r = d.data();
+          let entrada = r.data_entrada;
+          let saida = r.data_saida;
+          if (entrada && typeof entrada.toDate === 'function') entrada = entrada.toDate();
+          else if (typeof entrada === 'string') entrada = new Date(entrada);
+          if (saida && typeof saida.toDate === 'function') saida = saida.toDate();
+          else if (typeof saida === 'string') saida = new Date(saida);
+          activeReservations.push({ room_id: r.room_id, data_entrada: entrada, data_saida: saida });
+        });
+      } catch (err) {
+        console.error("Erro ao carregar bloqueios/reservas:", err);
+      }
+    }
+
+    // Check if a specific date is blocked for ANY room
+    function isDateBlockedForAnyRoom(date) {
+      const dateStr = date.toISOString().split('T')[0];
+      return blockedData.some(b => dateStr >= b.data_inicio && dateStr <= b.data_fim);
+    }
+
+    // Check if a specific room is blocked on a specific date
+    function isRoomBlockedOnDate(roomName, date) {
+      const dateStr = date.toISOString().split('T')[0];
+      return blockedData.some(b => {
+        if (dateStr >= b.data_inicio && dateStr <= b.data_fim) {
+          return b.quartos.includes(roomName);
+        }
+        return false;
+      });
+    }
+
+    // Check if a room is occupied (by reservation) for a date range
+    function isRoomOccupiedInRange(roomName, startDate, endDate) {
+      return activeReservations.some(r => {
+        if (r.room_id !== roomName) return false;
+        const rStart = new Date(r.data_entrada); rStart.setHours(0,0,0,0);
+        const rEnd = new Date(r.data_saida); rEnd.setHours(0,0,0,0);
+        const sStart = new Date(startDate); sStart.setHours(0,0,0,0);
+        const sEnd = new Date(endDate); sEnd.setHours(0,0,0,0);
+        return sStart < rEnd && sEnd > rStart;
+      });
+    }
+
+    // Check if a room is blocked in a date range
+    function isRoomBlockedInRange(roomName, startDate, endDate) {
+      const sStart = new Date(startDate); sStart.setHours(0,0,0,0);
+      const sEnd = new Date(endDate); sEnd.setHours(0,0,0,0);
+      for (let d = new Date(sStart); d < sEnd; d.setDate(d.getDate() + 1)) {
+        if (isRoomBlockedOnDate(roomName, d)) return true;
+      }
+      return false;
+    }
+
+    // ====== CALENDAR RENDERING ======
+    function renderCalendars() {
+      renderMonth("calendarMonth1", currentMonth1);
+      renderMonth("calendarMonth2", currentMonth2);
+    }
+
+    function renderMonth(containerId, date) {
+      const container = document.getElementById(containerId);
+      const year = date.getFullYear();
+      const month = date.getMonth();
+      const today = new Date();
+      today.setHours(0,0,0,0);
+
+      const firstDay = new Date(year, month, 1);
+      let startDay = firstDay.getDay() - 1;
+      if (startDay < 0) startDay = 6;
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+      let html = `
+        <div class="calendar-nav">
+          <button type="button" onclick="window._prevMonth()"><i class="fas fa-chevron-left"></i></button>
+          <h3>${monthNames[month]} ${year}</h3>
+          <button type="button" onclick="window._nextMonth()"><i class="fas fa-chevron-right"></i></button>
+        </div>
+        <div class="calendar-grid">
+      `;
+
+      dayNames.forEach(d => {
+        html += `<div class="cal-header">${d}</div>`;
+      });
+
+      for (let i = 0; i < startDay; i++) {
+        html += `<div class="cal-day other-month"></div>`;
+      }
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const d = new Date(year, month, day);
+        d.setHours(0,0,0,0);
+        let classes = "cal-day";
+        let label = "";
+        let isBlocked = isDateBlockedForAnyRoom(d);
+
+        if (d < today) {
+          classes += " disabled";
+        } else if (isBlocked) {
+          classes += " blocked";
+        }
+        if (d.getTime() === today.getTime()) {
+          classes += " today";
+        }
+        if (checkinDate && d.getTime() === checkinDate.getTime()) {
+          classes += " check-in";
+          label = `<span class="date-label">Check-in</span>`;
+        }
+        if (checkoutDate && d.getTime() === checkoutDate.getTime()) {
+          classes += " check-out";
+          label = `<span class="date-label">Check-out</span>`;
+        }
+        if (checkinDate && checkoutDate && d > checkinDate && d < checkoutDate) {
+          classes += " in-range";
+        }
+
+        const clickable = (d >= today && !isBlocked) ? `onclick="window._pickDate(${year},${month},${day})"` : "";
+        html += `<div class="${classes}" ${clickable}>${day}${label}</div>`;
+      }
+
+      html += `</div>`;
+      container.innerHTML = html;
+    }
+
+    window._pickDate = function(year, month, day) {
+      const d = new Date(year, month, day);
+      d.setHours(0,0,0,0);
+
+      if (!selectingCheckout || !checkinDate || d <= checkinDate) {
+        checkinDate = d;
+        checkoutDate = null;
+        selectingCheckout = true;
+      } else {
+        checkoutDate = d;
+        selectingCheckout = false;
+      }
+
+      updateDateDisplay();
+      renderCalendars();
+      updateRoomAvailability();
+      updateSummary();
+    };
+
+    function updateDateDisplay() {
+      const opts = { day: '2-digit', month: '2-digit', year: 'numeric' };
+      const ciEl = document.getElementById("checkinDisplay");
+      const coEl = document.getElementById("checkoutDisplay");
+      const nightsEl = document.getElementById("nightsDisplay");
+
+      if (checkinDate) {
+        ciEl.textContent = checkinDate.toLocaleDateString(lang === "pt" ? "pt-PT" : "en-GB", opts);
+        ciEl.classList.remove("empty");
+        const checkinTime = document.getElementById("checkinTime").value;
+        document.getElementById("entrada").value = formatDateTime(checkinDate, checkinTime);
+      } else {
+        ciEl.textContent = lang === "pt" ? "Selecione no calendário" : "Select on calendar";
+        ciEl.classList.add("empty");
+      }
+
+      if (checkoutDate) {
+        coEl.textContent = checkoutDate.toLocaleDateString(lang === "pt" ? "pt-PT" : "en-GB", opts);
+        coEl.classList.remove("empty");
+        const checkoutTime = document.getElementById("checkoutTime").value;
+        document.getElementById("saida").value = formatDateTime(checkoutDate, checkoutTime);
+      } else {
+        coEl.textContent = lang === "pt" ? "Selecione no calendário" : "Select on calendar";
+        coEl.classList.add("empty");
+      }
+
+      if (checkinDate && checkoutDate) {
+        const nights = Math.ceil((checkoutDate - checkinDate) / (1000*60*60*24));
+        nightsEl.textContent = nights;
+      } else {
+        nightsEl.textContent = "0";
+      }
+    }
+
+    function formatDateTime(date, time) {
+      const y = date.getFullYear();
+      const m = String(date.getMonth() + 1).padStart(2, '0');
+      const d = String(date.getDate()).padStart(2, '0');
+      return `${y}-${m}-${d}T${time}`;
+    }
+
+    window._prevMonth = function() {
+      currentMonth1.setMonth(currentMonth1.getMonth() - 1);
+      currentMonth2.setMonth(currentMonth2.getMonth() - 1);
+      renderCalendars();
+    };
+
+    window._nextMonth = function() {
+      currentMonth1.setMonth(currentMonth1.getMonth() + 1);
+      currentMonth2.setMonth(currentMonth2.getMonth() + 1);
+      renderCalendars();
+    };
+
+    // ====== ROOM AVAILABILITY ======
+    function updateRoomAvailability() {
+      document.querySelectorAll('.room-card').forEach(card => {
+        const roomName = card.dataset.room;
+        card.classList.remove('occupied');
+        const existingBadge = card.querySelector('.occupied-badge');
+        if (existingBadge) existingBadge.remove();
+
+        if (checkinDate && checkoutDate) {
+          const isOccupied = isRoomOccupiedInRange(roomName, checkinDate, checkoutDate);
+          const isBlocked = isRoomBlockedInRange(roomName, checkinDate, checkoutDate);
+
+          if (isOccupied || isBlocked) {
+            card.classList.add('occupied');
+            card.classList.remove('selected');
+            if (selectedRoom === roomName) {
+              selectedRoom = null;
+              document.getElementById("quarto").value = "";
+            }
+            const badge = document.createElement('div');
+            badge.className = 'occupied-badge';
+            badge.textContent = isBlocked
+              ? (lang === "pt" ? "Bloqueado" : "Blocked")
+              : (lang === "pt" ? "Ocupado nesta data" : "Occupied on this date");
+            card.style.position = 'relative';
+            card.appendChild(badge);
+          }
+        }
+      });
+    }
+
+    // ====== ROOM SELECTION ======
+    window.selectRoom = function(card) {
+      if (card.classList.contains('occupied')) return;
+      document.querySelectorAll('.room-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      selectedRoom = card.dataset.room;
+      document.getElementById("quarto").value = selectedRoom;
+      updateSummary();
+
+      document.getElementById("step2Indicator").classList.add("completed");
+      document.getElementById("step3Indicator").classList.add("active");
+    };
+
+    // ====== SUMMARY ======
+    function updateSummary() {
+      const nights = (checkinDate && checkoutDate)
+        ? Math.ceil((checkoutDate - checkinDate) / (1000*60*60*24)) : 0;
+
+      document.getElementById("summaryRoom").textContent = selectedRoom || "-";
+
+      const opts = { day: '2-digit', month: '2-digit', year: 'numeric' };
+      const locale = lang === "pt" ? "pt-PT" : "en-GB";
+      const ciTime = document.getElementById("checkinTime").value;
+      const coTime = document.getElementById("checkoutTime").value;
+
+      document.getElementById("summaryCheckin").textContent = checkinDate
+        ? `${checkinDate.toLocaleDateString(locale, opts)} ${ciTime}` : "-";
+      document.getElementById("summaryCheckout").textContent = checkoutDate
+        ? `${checkoutDate.toLocaleDateString(locale, opts)} ${coTime}` : "-";
+      document.getElementById("summaryNights").textContent = nights;
+
+      // Room price
+      let roomPrice = 0;
+      if (selectedRoom) {
+        const selectedCard = document.querySelector(`.room-card[data-room="${selectedRoom}"]`);
+        if (selectedCard) roomPrice = parseFloat(selectedCard.dataset.price) || 0;
+      }
+      const roomTotal = roomPrice * nights;
+
+      let extrasTotal = 0;
+      document.querySelectorAll('.extras-grid input[type="checkbox"]:checked').forEach(cb => {
+        const val = parseFloat(cb.value);
+        if (cb.name === 'extra-breakfast' || cb.name === 'extra-parking') {
+          extrasTotal += val * nights;
+        } else {
+          extrasTotal += val;
+        }
+      });
+
+      document.getElementById("summaryExtras").textContent = extrasTotal.toFixed(2) + "€";
+      document.getElementById("summaryTotal").textContent = (roomTotal + extrasTotal).toFixed(2) + "€";
+
+      if (checkinDate && checkoutDate) {
+        document.getElementById("step1Indicator").classList.add("completed");
+        document.getElementById("step2Indicator").classList.add("active");
+      }
+    }
+
+    // Event listeners
+    document.getElementById("checkinTime").addEventListener("change", () => { updateDateDisplay(); updateSummary(); });
+    document.getElementById("checkoutTime").addEventListener("change", () => { updateDateDisplay(); updateSummary(); });
+    document.querySelectorAll('.extras-grid input[type="checkbox"]').forEach(cb => {
+      cb.addEventListener("change", updateSummary);
+    });
+
+    // Init
+    await loadBlocksAndReservations();
+    renderCalendars();
+  </script>
+
+</body>
+</html>

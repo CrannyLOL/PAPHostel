@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8">
+  <title>Criar Conta | Golden Beach Guest House</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-dark: #2C3E50;
+      --secondary-dark: #34495E;
+      --accent-color: #95A5A6;
+      --light-gray: #ECF0F1;
+      --ultra-light: #F8F9FA;
+      --white: #FFFFFF;
+      --text-dark: #2C3E50;
+      --text-light: #7F8C8D;
+      --border-color: #E0E0E0;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    h1, h2, h3 {
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    body {
+      background: var(--ultra-light);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: rgba(255, 255, 255, 0.98);
+      padding: 15px 40px;
+      z-index: 1000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .navbar-left {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .navbar-logo {
+      max-width: 120px;
+      height: auto;
+    }
+
+    .navbar h2 {
+      display: none;
+    }
+
+    .navbar-right {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+
+    .language-selector {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      background: var(--ultra-light);
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+    }
+
+    .language-selector span {
+      color: var(--text-dark);
+      font-size: 0.75rem;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .language-buttons {
+      display: flex;
+      gap: 6px;
+    }
+
+    .language-toggle {
+      background: none;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      padding: 0;
+      opacity: 0.6;
+    }
+
+    .language-toggle img {
+      width: 48px;
+      height: 32px;
+      border-radius: 4px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+      display: block;
+    }
+
+    .language-toggle:hover {
+      transform: scale(1.08);
+      opacity: 1;
+    }
+
+    .navbar a {
+      color: var(--white);
+      text-decoration: none;
+      background: var(--primary-dark);
+      padding: 10px 24px;
+      border-radius: 4px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      font-size: 0.9rem;
+      letter-spacing: 0.5px;
+    }
+
+    .navbar a:hover {
+      transform: translateY(-2px);
+      background: var(--secondary-dark);
+      box-shadow: 0 4px 12px rgba(44, 62, 80, 0.3);
+    }
+
+    .register-container {
+      width: 100%;
+      max-width: 520px;
+      margin-top: 100px;
+      margin-bottom: 30px;
+    }
+
+    .register-card {
+      background: var(--white);
+      padding: 50px 40px;
+      border-radius: 8px;
+      color: var(--text-dark);
+      box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+      border-top: 3px solid var(--primary-dark);
+    }
+
+    .logo-container {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .logo {
+      max-width: 180px;
+      height: auto;
+    }
+
+    .register-card h1 {
+      text-align: center;
+      margin-bottom: 8px;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+      letter-spacing: 1px;
+    }
+
+    .register-card p {
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 0.95rem;
+      opacity: 0.75;
+      color: var(--text-dark);
+      letter-spacing: 0.5px;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
+      color: var(--primary-dark);
+      text-transform: uppercase;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 4px;
+      border: 1px solid #DDD;
+      font-size: 0.95rem;
+      background: var(--white);
+      color: var(--text-dark);
+      transition: all 0.3s ease;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    .form-group input::placeholder {
+      color: rgba(44, 44, 44, 0.5);
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: var(--primary-dark);
+      box-shadow: 0 0 0 3px rgba(44, 62, 80, 0.1);
+    }
+
+    .form-group select {
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%231B3F5C' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 35px;
+    }
+
+    .form-group option {
+      background: var(--white);
+      color: var(--text-dark);
+    }
+
+    .password-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .password-container input {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 4px;
+      border: 1px solid #DDD;
+      font-size: 0.95rem;
+      background: var(--white);
+      color: var(--text-dark);
+      transition: all 0.3s ease;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    .password-container input:focus {
+      outline: none;
+      border-color: var(--primary-dark);
+      box-shadow: 0 0 0 3px rgba(44, 62, 80, 0.1);
+    }
+
+    .password-toggle {
+      background: none;
+      border: none;
+      color: var(--accent-color);
+      cursor: pointer;
+      padding: 8px;
+      font-size: 1.3rem;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      width: 45px;
+      height: 45px;
+    }
+
+    .password-toggle:hover {
+      color: var(--primary-dark);
+    }
+
+    .two-columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 0;
+    }
+
+    .two-columns .form-group {
+      margin-bottom: 18px;
+    }
+
+    .btn-register {
+      width: 100%;
+      padding: 14px;
+      margin-top: 15px;
+      background: var(--primary-dark);
+      color: var(--white);
+      border: none;
+      border-radius: 4px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(44, 62, 80, 0.2);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .btn-register:hover {
+      transform: translateY(-2px);
+      background: var(--secondary-dark);
+      box-shadow: 0 6px 25px rgba(44, 62, 80, 0.3);
+    }
+
+    .btn-register:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .login-link {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.9rem;
+      color: var(--text-dark);
+    }
+
+    .login-link a {
+      color: var(--primary-dark);
+      text-decoration: none;
+      font-weight: 700;
+      transition: all 0.2s ease;
+      letter-spacing: 0.5px;
+    }
+
+    .login-link a:hover {
+      color: var(--accent-color);
+      text-decoration: underline;
+    }
+
+    .message {
+      margin-bottom: 20px;
+      padding: 14px 16px;
+      border-radius: 4px;
+      text-align: center;
+      font-size: 0.9rem;
+      display: none;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+    }
+
+    .message.success {
+      background: rgba(90, 173, 179, 0.15);
+      color: #2C7A7B;
+      border: 1px solid rgba(90, 173, 179, 0.3);
+    }
+
+    .message.error {
+      background: rgba(220, 100, 80, 0.15);
+      color: #C53030;
+      border: 1px solid rgba(220, 100, 80, 0.3);
+    }
+
+    .message.show {
+      display: block;
+    }
+
+    .terms {
+      font-size: 0.8rem;
+      opacity: 0.65;
+      margin-top: 18px;
+      line-height: 1.6;
+      text-align: center;
+      color: var(--text-dark);
+      letter-spacing: 0.3px;
+    }
+
+    .terms a {
+      color: var(--primary-dark);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .terms a:hover {
+      text-decoration: underline;
+      color: var(--accent-color);
+    }
+
+    .login-links {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 100;
+    }
+
+    .login-links a {
+      color: var(--white);
+      text-decoration: none;
+      font-size: 0.8rem;
+      padding: 6px 12px;
+      border: none;
+      border-radius: 4px;
+      background: var(--primary-dark);
+      transition: all 0.2s ease;
+      text-align: center;
+      min-width: 80px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .login-links a:hover {
+      background: var(--secondary-dark);
+    }
+
+    @media (max-width: 768px) {
+      .register-card {
+        padding: 35px 28px;
+      }
+
+      .register-card h1 {
+        font-size: 1.75rem;
+      }
+
+      .two-columns {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+
+      .navbar {
+        padding: 12px 24px;
+      }
+
+      .navbar h2 {
+        font-size: 1.1rem;
+      }
+
+      .login-links {
+        bottom: 20px;
+        right: 20px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .register-card {
+        padding: 30px 20px;
+      }
+
+      .register-card h1 {
+        font-size: 1.5rem;
+      }
+
+      .register-card p {
+        font-size: 0.85rem;
+      }
+
+      .navbar {
+        flex-direction: column;
+        gap: 10px;
+        padding: 12px 20px;
+      }
+
+      .navbar-left {
+        gap: 12px;
+      }
+
+      .navbar h2 {
+        font-size: 0.95rem;
+      }
+
+      .navbar-right {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .register-container {
+        margin-top: 140px;
+        margin-bottom: 20px;
+      }
+
+      .form-group label {
+        font-size: 0.8rem;
+      }
+
+      .form-group input,
+      .form-group select {
+        padding: 10px 12px;
+        font-size: 0.9rem;
+      }
+
+      .login-links {
+        bottom: 15px;
+        right: 15px;
+        gap: 6px;
+      }
+
+      .login-links a {
+        font-size: 0.75rem;
+        padding: 5px 10px;
+        min-width: 70px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <div class="navbar">
+    <div class="navbar-left">
+      <img src="img/logo.png" alt="Logo" class="navbar-logo">
+      <h2>GOLDEN BEACH GUESTHOUSE</h2>
+    </div>
+    <div class="navbar-right">
+      <div class="language-selector">
+        <span data-i18n="lang-label">Selecionar Idioma</span>
+        <div class="language-buttons">
+          <button class="language-toggle" id="langBtnPt" title="Português">
+            <img src="img/Pt.png" alt="Português">
+          </button>
+          <button class="language-toggle" id="langBtnEn" title="English">
+            <img src="img/Uk.png" alt="English">
+          </button>
+        </div>
+      </div>
+      <a href="home.html" data-i18n="navbar-home">Home</a>
+    </div>
+  </div>
+
+  <!-- Login Links -->
+  <div class="login-links">
+    <a href="login-staff.html">STAFF</a>
+    <a href="login-admin.html">ADMIN</a>
+  </div>
+
+  <!-- Register Container -->
+  <div class="register-container">
+    <div class="register-card">
+      <div class="logo-container">
+        <img src="img/logo.png" alt="Golden Beach Guest House" class="logo">
+      </div>
+
+      <h1 data-i18n="register-title">Criar Conta</h1>
+      <p data-i18n="register-subtitle">Junte-se a nós e desfrute de benefícios exclusivos</p>
+
+      <div id="message" class="message"></div>
+
+      <form id="registerForm">
+        <div class="two-columns">
+          <div class="form-group">
+            <label for="firstName" data-i18n="register-firstname">Nome *</label>
+            <input type="text" id="firstName" name="firstName" required placeholder="">
+          </div>
+
+          <div class="form-group">
+            <label for="lastName" data-i18n="register-lastname">Sobrenome *</label>
+            <input type="text" id="lastName" name="lastName" required placeholder="">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="email" data-i18n="register-email">Email *</label>
+          <input type="email" id="email" name="email" required placeholder="">
+        </div>
+
+        <div class="two-columns">
+          <div class="form-group">
+            <label for="phone" data-i18n="register-phone">Telefone</label>
+            <input type="tel" id="phone" name="phone" placeholder="">
+          </div>
+
+          <div class="form-group">
+            <label for="cc" data-i18n="register-cc">Cartão de Cidadão *</label>
+            <input type="text" id="cc" name="cc" required placeholder="">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="nationality" data-i18n="register-nationality">Nacionalidade</label>
+          <select id="nationality" name="nationality">
+            <option value="">Selecione...</option>
+            <option value="PT">Portugal</option>
+            <option value="ES">Espanha</option>
+            <option value="FR">França</option>
+            <option value="DE">Alemanha</option>
+            <option value="IT">Itália</option>
+            <option value="GB">Reino Unido</option>
+            <option value="BR">Brasil</option>
+            <option value="US">Estados Unidos</option>
+            <option value="Other">Outro</option>
+          </select>
+        </div>
+
+<div class="form-group">
+          <label for="password" data-i18n="register-password">Palavra-passe *</label>
+          <div class="password-container">
+            <input type="password" id="password" name="password" required placeholder="">
+            <button type="button" class="password-toggle" onclick="togglePasswordVisibility('password', event)">
+              <i class="fas fa-eye"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="confirmPassword" data-i18n="register-confirm-password">Confirmar Palavra-passe *</label>
+          <div class="password-container">
+            <input type="password" id="confirmPassword" name="confirmPassword" required placeholder="">
+            <button type="button" class="password-toggle" onclick="togglePasswordVisibility('confirmPassword', event)">
+              <i class="fas fa-eye"></i>
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-register" data-i18n="register-btn">Criar Conta</button>
+      </form>
+
+      <div class="terms" data-i18n="register-terms">
+        Ao registar-se, concorda com os nossos <a href="#">Termos de Serviço</a> e <a href="#">Política de Privacidade</a>
+      </div>
+
+      <div class="login-link">
+        <span data-i18n="register-have-account">Já tem conta? </span>
+        <a href="index.html" data-i18n="register-login-link">Fazer Login</a>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="js/register.js"></script>
+</body>
+</html>

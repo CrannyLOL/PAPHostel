@@ -1,0 +1,24 @@
+{
+  "name": "pap-hostel-app",
+  "version": "1.0.0",
+  "description": "PAP Hostel App - Sistema de Auto Check-in Digital",
+  "type": "module",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node server/index.js",
+    "build": "npm install"
+  },
+  "keywords": ["hostel", "booking", "check-in", "express", "firebase"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "firebase-admin": "^13.6.0",
+    "node-fetch": "^3.3.2",
+    "nodemailer": "^8.0.2",
+    "pdfkit": "^0.18.0"
+  }
+}

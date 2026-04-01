@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8">
+  <title>Golden Beach Guest House | Pagamento</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-dark: #2C3E50;
+      --secondary-dark: #34495E;
+      --accent-blue: #2980B9;
+      --accent-yellow: #D4A843;
+      --success: #27AE60;
+      --danger: #E74C3C;
+      --light-gray: #ECF0F1;
+      --ultra-light: #F8F9FA;
+      --white: #FFFFFF;
+      --text-dark: #2C3E50;
+      --text-light: #7F8C8D;
+      --border-color: #E0E0E0;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      overflow-x: hidden;
+      background: var(--ultra-light);
+    }
+
+    .bg-video {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      z-index: -2;
+      opacity: 0;
+      transition: opacity 2s ease-in-out;
+    }
+    .bg-video.active { opacity: 1; }
+
+    .overlay {
+      position: relative;
+      min-height: 100vh;
+      background: linear-gradient(135deg, rgba(44,62,80,0.82), rgba(52,73,94,0.72));
+      backdrop-filter: blur(3px);
+      padding-top: 90px;
+      padding-bottom: 50px;
+    }
+
+    /* Navbar */
+    .navbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      background: rgba(44,62,80,0.97);
+      padding: 18px 50px;
+      z-index: 1000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      backdrop-filter: blur(15px);
+      box-shadow: 0 2px 15px rgba(0,0,0,0.3);
+    }
+    .navbar-left {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .navbar-logo {
+      max-width: 120px;
+      height: auto;
+    }
+    .navbar h2 { display: none; }
+    .navbar-right {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+    .navbar a {
+      color: var(--white);
+      text-decoration: none;
+      background: var(--accent-blue);
+      padding: 10px 22px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      transition: all 0.3s;
+    }
+    .navbar a:hover {
+      background: var(--accent-yellow);
+      transform: translateY(-2px);
+    }
+
+    /* Container */
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 30px 20px;
+    }
+
+    .payment-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .payment-header h1 {
+      color: var(--white);
+      font-size: 2.4rem;
+      font-weight: 800;
+      letter-spacing: 3px;
+      text-shadow: 3px 3px 6px rgba(0,0,0,0.4);
+      margin-bottom: 10px;
+    }
+    .payment-header p {
+      color: rgba(255,255,255,0.9);
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+
+    .payment-section {
+      background: rgba(255,255,255,0.98);
+      border-radius: 20px;
+      padding: 40px;
+      margin-bottom: 30px;
+      box-shadow: 0 15px 50px rgba(0,0,0,0.3);
+      border-top: 4px solid var(--accent-blue);
+    }
+
+    .section-heading {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+      margin-bottom: 25px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .section-heading i {
+      color: var(--accent-blue);
+      font-size: 1.3rem;
+    }
+
+    /* Summary */
+    .booking-summary {
+      background: var(--ultra-light);
+      padding: 25px;
+      border-radius: 12px;
+      border: 2px solid var(--border-color);
+      margin-bottom: 30px;
+    }
+    .summary-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border-color);
+      font-size: 0.95rem;
+    }
+    .summary-item:last-child {
+      border-bottom: none;
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--accent-blue);
+      padding-top: 15px;
+      margin-top: 10px;
+      border-top: 2px solid var(--accent-blue);
+    }
+    .summary-label { font-weight: 600; color: var(--text-dark); }
+    .summary-value { font-weight: 700; color: var(--primary-dark); }
+
+    /* Payment Methods */
+    .payment-methods {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+    .payment-method {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 20px;
+      border: 2px solid var(--border-color);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s;
+      background: var(--white);
+    }
+    .payment-method:hover {
+      border-color: var(--accent-blue);
+      box-shadow: 0 4px 15px rgba(41,128,185,0.1);
+    }
+    .payment-method.selected {
+      border-color: var(--accent-blue);
+      background: rgba(41,128,185,0.04);
+      box-shadow: 0 4px 15px rgba(41,128,185,0.15);
+    }
+    .payment-method input[type="radio"] {
+      width: 20px;
+      height: 20px;
+      accent-color: var(--accent-blue);
+      cursor: pointer;
+    }
+    .payment-method-icon {
+      width: 60px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+    .payment-method-icon.paypal {
+      background: #FFC439;
+      color: #003087;
+    }
+    .payment-method-icon.mbway {
+      background: #E31937;
+      color: white;
+    }
+    .payment-method-icon.transfer {
+      background: var(--primary-dark);
+      color: white;
+    }
+    .payment-method-info h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+      margin-bottom: 4px;
+    }
+    .payment-method-info p {
+      font-size: 0.82rem;
+      color: var(--text-light);
+    }
+
+    /* PayPal Container */
+    #paypal-button-container {
+      margin-top: 20px;
+      min-height: 50px;
+    }
+
+    /* Buttons */
+    .btn-pay {
+      width: 100%;
+      padding: 18px;
+      background: var(--accent-blue);
+      color: var(--white);
+      border: none;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: 800;
+      cursor: pointer;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      font-family: 'Montserrat', sans-serif;
+      transition: all 0.3s;
+      box-shadow: 0 4px 15px rgba(41,128,185,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    .btn-pay:hover {
+      background: var(--accent-yellow);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(212,168,67,0.3);
+    }
+    .btn-pay:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-back {
+      width: 100%;
+      padding: 14px;
+      background: transparent;
+      color: var(--text-light);
+      border: 2px solid var(--border-color);
+      border-radius: 12px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: 'Montserrat', sans-serif;
+      transition: all 0.3s;
+      margin-top: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .btn-back:hover {
+      border-color: var(--primary-dark);
+      color: var(--primary-dark);
+    }
+
+    /* Success */
+    .payment-success {
+      display: none;
+      text-align: center;
+      padding: 40px 20px;
+    }
+    .payment-success.show {
+      display: block;
+    }
+    .payment-success i {
+      font-size: 4rem;
+      color: var(--success);
+      margin-bottom: 20px;
+    }
+    .payment-success h2 {
+      font-size: 1.8rem;
+      color: var(--primary-dark);
+      margin-bottom: 15px;
+    }
+    .payment-success p {
+      color: var(--text-light);
+      font-size: 1rem;
+      line-height: 1.8;
+      margin-bottom: 10px;
+    }
+    .payment-success .code-display {
+      font-family: 'Courier New', monospace;
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--accent-blue);
+      background: rgba(41,128,185,0.08);
+      padding: 15px 30px;
+      border-radius: 12px;
+      display: inline-block;
+      letter-spacing: 4px;
+      margin: 15px 0;
+    }
+
+    /* Secure badge */
+    .secure-badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 20px;
+      color: var(--text-light);
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+    .secure-badge i {
+      color: var(--success);
+    }
+
+    @media (max-width: 768px) {
+      .navbar { padding: 15px 20px; }
+      .navbar-logo { max-width: 60px; }
+      .payment-header h1 { font-size: 1.8rem; }
+      .payment-section { padding: 25px 20px; }
+      .container { padding: 20px 15px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Vídeos de fundo -->
+  <video class="bg-video active" autoplay muted loop playsinline>
+    <source src="video/Hotel_vid1.mp4" type="video/mp4">
+  </video>
+  <video class="bg-video" autoplay muted loop playsinline>
+    <source src="video/Hotel_vid2.mp4" type="video/mp4">
+  </video>
+  <video class="bg-video" autoplay muted loop playsinline>
+    <source src="video/Hotel_vid3.mp4" type="video/mp4">
+  </video>
+
+  <!-- Navbar -->
+  <div class="navbar">
+    <div class="navbar-left">
+      <img src="img/logo.png" alt="Logo" class="navbar-logo">
+      <h2>GOLDEN BEACH</h2>
+    </div>
+    <div class="navbar-right">
+      <a href="booking.html"><i class="fas fa-arrow-left"></i> Voltar</a>
+      <a href="home.html">Início</a>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="overlay">
+    <div class="container">
+
+      <div class="payment-header">
+        <h1><i class="fas fa-lock"></i> Pagamento Seguro</h1>
+        <p>Complete o pagamento para confirmar a sua reserva</p>
+      </div>
+
+      <!-- Payment Form -->
+      <div id="paymentForm">
+        <div class="payment-section">
+          <h2 class="section-heading">
+            <i class="fas fa-receipt"></i>
+            Resumo da Reserva
+          </h2>
+
+          <div class="booking-summary">
+            <div class="summary-item">
+              <span class="summary-label">Quarto:</span>
+              <span class="summary-value" id="payRoom">-</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Check-in:</span>
+              <span class="summary-value" id="payCheckin">-</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Check-out:</span>
+              <span class="summary-value" id="payCheckout">-</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Noites:</span>
+              <span class="summary-value" id="payNights">0</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Hóspede:</span>
+              <span class="summary-value" id="payGuest">-</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Preço/noite:</span>
+              <span class="summary-value" id="payRoomPrice">0€</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Extras:</span>
+              <span class="summary-value" id="payExtras">0€</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Total a Pagar:</span>
+              <span class="summary-value" id="payTotal">0€</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="payment-section">
+          <h2 class="section-heading">
+            <i class="fas fa-credit-card"></i>
+            Método de Pagamento
+          </h2>
+
+          <div class="payment-methods">
+            <label class="payment-method selected" data-method="paypal">
+              <input type="radio" name="payMethod" value="paypal" checked>
+              <div class="payment-method-icon paypal">
+                <i class="fab fa-paypal"></i>
+              </div>
+              <div class="payment-method-info">
+                <h3>PayPal</h3>
+                <p>Pague com a sua conta PayPal de forma segura</p>
+              </div>
+            </label>
+
+            <label class="payment-method" data-method="mbway">
+              <input type="radio" name="payMethod" value="mbway">
+              <div class="payment-method-icon mbway">
+                <i class="fas fa-mobile-alt"></i>
+              </div>
+              <div class="payment-method-info">
+                <h3>MB WAY</h3>
+                <p>Pague com o seu telemóvel através do MB WAY</p>
+              </div>
+            </label>
+
+            <label class="payment-method" data-method="transfer">
+              <input type="radio" name="payMethod" value="transfer">
+              <div class="payment-method-icon transfer">
+                <i class="fas fa-university"></i>
+              </div>
+              <div class="payment-method-info">
+                <h3>Transferência Bancária</h3>
+                <p>Receba os dados para transferência por email</p>
+              </div>
+            </label>
+          </div>
+
+          <!-- PayPal Button Container -->
+          <div id="paypal-button-container"></div>
+
+          <!-- Generic Pay Button (for non-PayPal methods) -->
+          <button class="btn-pay" id="btnConfirmPay" style="display:none;">
+            <i class="fas fa-check-circle"></i> Confirmar Pagamento
+          </button>
+
+          <button class="btn-back" onclick="window.location.href='booking.html'">
+            <i class="fas fa-arrow-left"></i> Voltar à Reserva
+          </button>
+
+          <div class="secure-badge">
+            <i class="fas fa-shield-alt"></i>
+            Pagamento 100% seguro e encriptado
+          </div>
+        </div>
+      </div>
+
+      <!-- Success Message -->
+      <div class="payment-success" id="paymentSuccess">
+        <div class="payment-section">
+          <i class="fas fa-check-circle"></i>
+          <h2>Reserva Confirmada!</h2>
+          <p>O seu pagamento foi processado com sucesso.</p>
+          <p><strong>Fatura enviada:</strong></p>
+          <div class="code-display" id="successCode">━━━━━━━━━━━━━━━</div>
+          <p>A sua fatura foi enviada para <strong id="successEmail"></strong></p>
+          <p id="successDetails"></p>
+          <button class="btn-pay" onclick="window.location.href='home.html'" style="margin-top:25px;">
+            <i class="fas fa-home"></i> Voltar ao Início
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PayPal SDK (Sandbox) -->
+  <script src="https://www.paypal.com/sdk/js?client-id=sb&currency=EUR"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <script type="module">
+    import { db } from "./js/firebase.js";
+    import { collection, addDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+    // Video rotation
+    const videos = document.querySelectorAll(".bg-video");
+    let videoAtual = 0;
+    videos.forEach(v => { v.playbackRate = 0.5; });
+    setInterval(() => {
+      videos[videoAtual].classList.remove("active");
+      videoAtual = (videoAtual + 1) % videos.length;
+      videos[videoAtual].classList.add("active");
+    }, 10000);
+
+    // Load booking data from session
+    const bookingRaw = sessionStorage.getItem("pendingBooking");
+    const lang = localStorage.getItem("language") || "pt";
+    
+    if (!bookingRaw) {
+      alert(lang === "pt" ? "Nenhuma reserva pendente. Redirecionando..." : "No pending reservation. Redirecting...");
+      window.location.href = "booking.html";
+    }
+
+    const booking = JSON.parse(bookingRaw);
+
+    // Populate summary
+    const entradaDate = new Date(booking.entrada);
+    const saidaDate = new Date(booking.saida);
+    const opts = { day: '2-digit', month: '2-digit', year: 'numeric' };
+
+    document.getElementById("payRoom").textContent = booking.quarto;
+    document.getElementById("payCheckin").textContent = `${entradaDate.toLocaleDateString('pt-PT', opts)} ${booking.hora_checkin}`;
+    document.getElementById("payCheckout").textContent = `${saidaDate.toLocaleDateString('pt-PT', opts)} ${booking.hora_checkout}`;
+    document.getElementById("payNights").textContent = booking.nights;
+    document.getElementById("payGuest").textContent = booking.firstName + " " + booking.lastName;
+    document.getElementById("payRoomPrice").textContent = booking.roomPrice.toFixed(2) + "€";
+    document.getElementById("payExtras").textContent = booking.extrasTotal.toFixed(2) + "€";
+    document.getElementById("payTotal").textContent = booking.total.toFixed(2) + "€";
+
+    // Payment method selection
+    document.querySelectorAll('.payment-method').forEach(method => {
+      method.addEventListener('click', () => {
+        document.querySelectorAll('.payment-method').forEach(m => m.classList.remove('selected'));
+        method.classList.add('selected');
+        method.querySelector('input[type="radio"]').checked = true;
+
+        const selectedMethod = method.dataset.method;
+        const paypalContainer = document.getElementById('paypal-button-container');
+        const confirmBtn = document.getElementById('btnConfirmPay');
+
+        if (selectedMethod === 'paypal') {
+          paypalContainer.style.display = 'block';
+          confirmBtn.style.display = 'none';
+        } else {
+          paypalContainer.style.display = 'none';
+          confirmBtn.style.display = 'flex';
+        }
+      });
+    });
+
+    // Create reservation in Firebase (WITHOUT TTLock code - will be generated at self check-in)
+    async function createReservation() {
+      const dadosReserva = {
+        nome_hospede: booking.firstName + " " + booking.lastName,
+        cc: booking.cc,
+        email: booking.email,
+        telefone: booking.phone,
+        room_id: booking.quarto,
+        data_entrada: new Date(booking.entrada),
+        data_saida: new Date(booking.saida),
+        hora_checkin: booking.hora_checkin,
+        hora_checkout: booking.hora_checkout,
+        criado_em: new Date(),
+        status: "ativa",
+        preco_noite: booking.roomPrice,
+        total_pago: booking.total,
+        extras: booking.extras,
+        pagamento: "confirmado"
+      };
+
+      await addDoc(collection(db, "reservas"), dadosReserva);
+      sessionStorage.removeItem("pendingBooking");
+    }
+
+    // Generate PDF Invoice
+    async function generateInvoicePDF() {
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF("p", "mm", "a4");
+      const pageWidth = 210;
+      const margin = 20;
+      const contentWidth = pageWidth - margin * 2;
+
+      // Load logo
+      let logoData = null;
+      try {
+        const resp = await fetch("img/logo.png");
+        const blob = await resp.blob();
+        logoData = await new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.readAsDataURL(blob);
+        });
+      } catch (e) { console.warn("Logo não carregado para PDF"); }
+
+      // Header background
+      pdf.setFillColor(44, 62, 80);
+      pdf.rect(0, 0, pageWidth, 55, "F");
+
+      // Logo
+      if (logoData) {
+        try { pdf.addImage(logoData, "PNG", margin, 8, 30, 30); } catch(e) {}
+      }
+
+      // Hotel Name
+      pdf.setTextColor(212, 168, 67);
+      pdf.setFontSize(22);
+      pdf.setFont("helvetica", "bold");
+      pdf.text("Golden Beach Guest House", logoData ? margin + 36 : margin, 22);
+      pdf.setTextColor(255, 255, 255);
+      pdf.setFontSize(10);
+      pdf.setFont("helvetica", "normal");
+      pdf.text("Algarve, Portugal", logoData ? margin + 36 : margin, 30);
+
+      // Invoice title
+      pdf.setFontSize(12);
+      pdf.setFont("helvetica", "bold");
+      pdf.text("FATURA / RECIBO", pageWidth - margin, 22, { align: "right" });
+      pdf.setFontSize(9);
+      pdf.setFont("helvetica", "normal");
+      const now = new Date();
+      const invoiceRef = now.getTime().toString().slice(-8);
+      pdf.text(`Data: ${now.toLocaleDateString("pt-PT")}`, pageWidth - margin, 30, { align: "right" });
+      pdf.text(`Ref: ${invoiceRef}`, pageWidth - margin, 36, { align: "right" });
+
+      // Divider
+      let y = 65;
+      pdf.setDrawColor(212, 168, 67);
+      pdf.setLineWidth(0.8);
+      pdf.line(margin, y, pageWidth - margin, y);
+
+      // Guest info section
+      y += 10;
+      pdf.setTextColor(44, 62, 80);
+      pdf.setFontSize(11);
+      pdf.setFont("helvetica", "bold");
+      pdf.text("Dados do Hóspede", margin, y);
+      y += 8;
+      pdf.setFontSize(9);
+      pdf.setFont("helvetica", "normal");
+      pdf.setTextColor(80, 80, 80);
+      pdf.text(`Nome: ${booking.firstName + " " + booking.lastName}`, margin, y); y += 6;
+      pdf.text(`CC/Passaporte: ${booking.cc}`, margin, y); y += 6;
+      pdf.text(`Email: ${booking.email}`, margin, y); y += 6;
+      pdf.text(`Telefone: ${booking.phone}`, margin, y); y += 12;
+
+      // Reservation Details
+      pdf.setTextColor(44, 62, 80);
+      pdf.setFontSize(11);
+      pdf.setFont("helvetica", "bold");
+      pdf.text("Detalhes da Reserva", margin, y);
+      y += 10;
+
+      // Table header
+      pdf.setFillColor(248, 249, 250);
+      pdf.rect(margin, y - 5, contentWidth, 10, "F");
+      pdf.setFontSize(8);
+      pdf.setFont("helvetica", "bold");
+      pdf.setTextColor(44, 62, 80);
+      pdf.text("Descrição", margin + 4, y);
+      pdf.text("Detalhes", pageWidth - margin - 4, y, { align: "right" });
+      y += 10;
+
+      // Table rows
+      pdf.setFont("helvetica", "normal");
+      pdf.setFontSize(9);
+      pdf.setTextColor(80, 80, 80);
+
+      const rows = [
+        ["Quarto", booking.quarto],
+        ["Check-in", `${entradaDate.toLocaleDateString("pt-PT", opts)} às ${booking.hora_checkin}`],
+        ["Check-out", `${saidaDate.toLocaleDateString("pt-PT", opts)} às ${booking.hora_checkout}`],
+        ["Noites", `${booking.nights}`],
+        ["Preço por noite", `${booking.roomPrice.toFixed(2)}€`],
+      ];
+
+      if (booking.extras && booking.extras.length > 0) {
+        rows.push(["Extras", booking.extras.join(", ")]);
+      }
+
+      rows.forEach(([label, value]) => {
+        pdf.text(label, margin + 4, y);
+        pdf.text(value, pageWidth - margin - 4, y, { align: "right" });
+        y += 7;
+        pdf.setDrawColor(230, 230, 230);
+        pdf.setLineWidth(0.3);
+        pdf.line(margin, y - 3, pageWidth - margin, y - 3);
+      });
+
+      // Subtotals
+      y += 5;
+      pdf.setFont("helvetica", "normal");
+      pdf.text("Subtotal Alojamento:", margin + 4, y);
+      pdf.text(`${(booking.roomPrice * booking.nights).toFixed(2)}€`, pageWidth - margin - 4, y, { align: "right" });
+      y += 7;
+      pdf.text("Subtotal Extras:", margin + 4, y);
+      pdf.text(`${booking.extrasTotal.toFixed(2)}€`, pageWidth - margin - 4, y, { align: "right" });
+      y += 10;
+
+      // Total
+      pdf.setFillColor(41, 128, 185);
+      pdf.rect(margin, y - 5, contentWidth, 12, "F");
+      pdf.setTextColor(255, 255, 255);
+      pdf.setFontSize(12);
+      pdf.setFont("helvetica", "bold");
+      pdf.text("TOTAL PAGO", margin + 4, y + 2);
+      pdf.text(`${booking.total.toFixed(2)}€`, pageWidth - margin - 4, y + 2, { align: "right" });
+
+      // Thank You
+      y += 25;
+      pdf.setTextColor(44, 62, 80);
+      pdf.setFontSize(13);
+      pdf.setFont("helvetica", "bold");
+      pdf.text("Obrigado por escolher a Golden Beach Guest House!", pageWidth / 2, y, { align: "center" });
+      y += 8;
+      pdf.setFontSize(9);
+      pdf.setFont("helvetica", "normal");
+      pdf.setTextColor(127, 140, 141);
+      pdf.text("Desejamos-lhe uma estadia agradável no Algarve.", pageWidth / 2, y, { align: "center" });
+      y += 6;
+      pdf.text("Utilize o Self Check-in para obter o seu código de acesso TTLock.", pageWidth / 2, y, { align: "center" });
+      y += 10;
+      pdf.setDrawColor(212, 168, 67);
+      pdf.setLineWidth(0.5);
+      pdf.line(margin + 40, y, pageWidth - margin - 40, y);
+
+      // Footer
+      y = 280;
+      pdf.setFontSize(7);
+      pdf.setTextColor(180, 180, 180);
+      pdf.text("Golden Beach Guest House | Algarve, Portugal | goldenbeach@hotel.com", pageWidth / 2, y, { align: "center" });
+
+      return pdf;
+    }
+
+    // Send invoice email via server
+    async function sendInvoiceEmail(pdfBase64) {
+      try {
+        await fetch("/api/send-invoice", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            to: booking.email,
+            subject: `Golden Beach Guest House - Fatura Reserva`,
+            guestName: booking.firstName + " " + booking.lastName,
+            pdfBase64: pdfBase64
+          })
+        });
+        console.log("Fatura enviada com sucesso para:", booking.email);
+      } catch (err) {
+        console.warn("Email não enviado (servidor não configurado):", err.message);
+      }
+    }
+
+    // Show success
+    async function showSuccess() {
+      document.getElementById("paymentForm").style.display = "none";
+      document.getElementById("paymentSuccess").classList.add("show");
+      document.getElementById("successCode").textContent = "✓ Fatura Enviada";
+      document.getElementById("successCode").style.fontSize = "1.2rem";
+      document.getElementById("successCode").style.fontWeight = "600";
+      document.getElementById("successCode").style.color = "var(--success)";
+      document.getElementById("successCode").style.background = "rgba(39, 174, 96, 0.1)";
+      document.getElementById("successEmail").textContent = booking.email;
+      document.getElementById("successDetails").innerHTML = `
+        <strong>Quarto:</strong> ${booking.quarto}<br>
+        <strong>Check-in:</strong> ${entradaDate.toLocaleDateString('pt-PT', opts)} às ${booking.hora_checkin}<br>
+        <strong>Check-out:</strong> ${saidaDate.toLocaleDateString('pt-PT', opts)} às ${booking.hora_checkout}<br>
+        <strong>Total:</strong> ${booking.total.toFixed(2)}€<br><br>
+        <em>O código de acesso para a fechadura TTLock será gerado quando você realizar o Self Check-in na página de acesso.</em>
+      `;
+
+      // Generate PDF and email it
+      try {
+        const pdf = await generateInvoicePDF();
+        const pdfBase64 = pdf.output("datauristring").split(",")[1];
+
+        // Auto-download PDF
+        const invoiceRef = new Date().getTime().toString().slice(-8);
+        pdf.save(`Fatura_GoldenBeach_${invoiceRef}.pdf`);
+
+        // Send via email
+        await sendInvoiceEmail(pdfBase64);
+      } catch (err) {
+        console.warn("PDF/Email error:", err);
+      }
+    }
+
+    // PayPal Buttons
+    if (typeof paypal !== 'undefined') {
+      paypal.Buttons({
+        style: {
+          layout: 'vertical',
+          color: 'blue',
+          shape: 'rect',
+          label: 'pay'
+        },
+        createOrder: function(data, actions) {
+          return actions.order.create({
+            purchase_units: [{
+              description: `Reserva ${booking.quarto} - ${booking.nights} noite(s)`,
+              amount: {
+                currency_code: 'EUR',
+                value: booking.total.toFixed(2)
+              }
+            }]
+          });
+        },
+        onApprove: async function(data, actions) {
+          try {
+            await actions.order.capture();
+            await createReservation();
+            await showSuccess();
+          } catch (err) {
+            console.error("Erro no pagamento PayPal:", err);
+            alert(lang === "pt" ? "Erro ao processar o pagamento. Por favor tente novamente." : "Error processing payment. Please try again.");
+          }
+        },
+        onError: function(err) {
+          console.error("Erro PayPal:", err);
+          alert(lang === "pt" ? "Ocorreu um erro com o PayPal. Por favor tente outro método." : "An error occurred with PayPal. Please try another method.");
+        }
+      }).render('#paypal-button-container');
+    }
+
+    // Non-PayPal confirm button
+    document.getElementById("btnConfirmPay").addEventListener("click", async () => {
+      const method = document.querySelector('input[name="payMethod"]:checked').value;
+      const btn = document.getElementById("btnConfirmPay");
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processando...';
+
+      try {
+        await createReservation();
+
+        if (method === 'mbway') {
+          alert(lang === "pt"
+            ? `Pagamento MB WAY: Um pedido de ${booking.total.toFixed(2)}€ será enviado para o seu telemóvel.`
+            : `MB WAY Payment: A request for ${booking.total.toFixed(2)}€ will be sent to your phone.`);
+        }
+        // Transferência bancária: vai direto para página final sem alert
+
+        await showSuccess();
+      } catch (err) {
+        console.error("Erro ao criar reserva:", err);
+        alert(lang === "pt" ? "Erro ao processar a reserva. Por favor tente novamente." : "Error processing reservation. Please try again.");
+        btn.disabled = false;
+        btn.innerHTML = lang === "pt" ? '<i class="fas fa-check-circle"></i> Confirmar Pagamento' : '<i class="fas fa-check-circle"></i> Confirm Payment';
+      }
+    });
+  </script>
+</body>
+</html>
