@@ -107,6 +107,27 @@ img {
   .booking-card img {
     height: 120px;
   }
+
+  /* Safe & Clean Image - Mobile */
+  .safe-clean-logo {
+    max-width: 150px !important;
+    width: 100%;
+    height: auto;
+    margin-bottom: 20px !important;
+  }
+
+  .safe-clean-section {
+    padding: 20px 12px !important;
+  }
+
+  .safe-clean-content h2 {
+    font-size: 1.3rem !important;
+    margin-bottom: 10px !important;
+  }
+
+  .safe-clean-content p {
+    font-size: 0.9rem !important;
+  }
 }
 
 /* ===== SMALL DEVICES (480px - 640px) ===== */
@@ -153,6 +174,27 @@ img {
   .room-card img,
   .booking-card img {
     height: 140px;
+  }
+
+  /* Safe & Clean Image - Small Devices */
+  .safe-clean-logo {
+    max-width: 180px !important;
+    width: 100%;
+    height: auto;
+    margin-bottom: 25px !important;
+  }
+
+  .safe-clean-section {
+    padding: 25px 15px !important;
+  }
+
+  .safe-clean-content h2 {
+    font-size: 1.5rem !important;
+    margin-bottom: 12px !important;
+  }
+
+  .safe-clean-content p {
+    font-size: 0.95rem !important;
   }
 }
 
@@ -220,6 +262,27 @@ img {
   .room-card img,
   .booking-card img {
     height: 150px;
+  }
+
+  /* Safe & Clean Image - Tablet Portrait */
+  .safe-clean-logo {
+    max-width: 250px !important;
+    width: 100%;
+    height: auto;
+    margin-bottom: 30px !important;
+  }
+
+  .safe-clean-section {
+    padding: 40px 20px !important;
+  }
+
+  .safe-clean-content h2 {
+    font-size: 1.8rem !important;
+    margin-bottom: 15px !important;
+  }
+
+  .safe-clean-content p {
+    font-size: 1rem !important;
   }
 }
 
@@ -294,6 +357,27 @@ img {
   .room-card img,
   .booking-card img {
     height: 180px;
+  }
+
+  /* Safe & Clean Image - Tablet Landscape */
+  .safe-clean-logo {
+    max-width: 300px !important;
+    width: 100%;
+    height: auto;
+    margin-bottom: 35px !important;
+  }
+
+  .safe-clean-section {
+    padding: 50px 30px !important;
+  }
+
+  .safe-clean-content h2 {
+    font-size: 2rem !important;
+    margin-bottom: 18px !important;
+  }
+
+  .safe-clean-content p {
+    font-size: 1.1rem !important;
   }
 }
 
@@ -382,6 +466,27 @@ img {
   .booking-card img {
     height: 220px;
   }
+
+  /* Safe & Clean Image - Desktop Small */
+  .safe-clean-logo {
+    max-width: 380px !important;
+    width: 100%;
+    height: auto;
+    margin-bottom: 40px !important;
+  }
+
+  .safe-clean-section {
+    padding: 60px 40px !important;
+  }
+
+  .safe-clean-content h2 {
+    font-size: 2.2rem !important;
+    margin-bottom: 20px !important;
+  }
+
+  .safe-clean-content p {
+    font-size: 1.15rem !important;
+  }
 }
 
 /* ===== DESKTOP LARGE (1441px e acima) ===== */
@@ -450,6 +555,27 @@ img {
   .room-card img,
   .booking-card img {
     height: 260px;
+  }
+
+  /* Safe & Clean Image - Desktop Large */
+  .safe-clean-logo {
+    max-width: 450px !important;
+    width: 100%;
+    height: auto;
+    margin-bottom: 40px !important;
+  }
+
+  .safe-clean-section {
+    padding: 80px 50px !important;
+  }
+
+  .safe-clean-content h2 {
+    font-size: 2.5rem !important;
+    margin-bottom: 20px !important;
+  }
+
+  .safe-clean-content p {
+    font-size: 1.3rem !important;
   }
 }
 
