@@ -447,7 +447,8 @@
     .safe-clean-logo {
       max-width: 450px;
       height: auto;
-      margin-bottom: 40px;
+      margin: 0 auto 40px auto;
+      display: block;
     }
 
     .safe-clean-content h2 {
