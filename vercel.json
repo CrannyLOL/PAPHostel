@@ -23,8 +23,5 @@
   ],
   "env": {
     "NODE_ENV": "production"
-  },
-  "buildOverrides": {
-    "engineOmitNextInvokeId": true
   }
 }
