@@ -17,8 +17,12 @@
       "dest": "server/index.js"
     },
     {
-      "src": "/(.*)",
-      "dest": "server/index.js"
+      "src": "/(?!api).*\\.(html|css|js|json|png|jpg|jpeg|gif|svg|mp4|webp|woff|woff2|ttf)$",
+      "dest": "/public/$0"
+    },
+    {
+      "src": "^/(?!api)(.*)$",
+      "dest": "/public/index.html"
     }
   ],
   "env": {

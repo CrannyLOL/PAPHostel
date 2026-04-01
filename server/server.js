@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 const PORT = 3000;
-const PUBLIC_DIR = path.join(__dirname, 'public');
+const PUBLIC_DIR = path.join(__dirname, '..', 'public');
 
 const server = http.createServer((req, res) => {
   let filePath = path.join(PUBLIC_DIR, req.url === '/' ? 'index.html' : req.url);
