@@ -52,11 +52,11 @@ git push -u origin main
 4. Busque `PAP-Hostel-App`
 5. Clique em **Import**
 
-### 3.2 Configurar Variáveis de Ambiente
-Na tela de configuração do projeto:
+### 3.2 Configurar Variáveis de Ambiente (⭐ CRÍTICO)
 
-1. **Environment Variables** → Adicionar todas as variáveis:
+Na tela de configuração do projeto, adicione **TODAS** estas variáveis:
 
+**Variáveis Firebase** (obter de `FIREBASE_ADMIN_SDK_KEY`):
 ```
 FIREBASE_API_KEY=seu_valor
 FIREBASE_AUTH_DOMAIN=seu_valor
@@ -65,18 +65,33 @@ FIREBASE_STORAGE_BUCKET=seu_valor
 FIREBASE_MESSAGING_SENDER_ID=seu_valor
 FIREBASE_APP_ID=seu_valor
 FIREBASE_ADMIN_SDK_KEY=seu_valor
+```
+
+**Variáveis de Email** (SMTP do Gmail):
+```
 EMAIL_MODE=real
-SMTP_HOST=seu_smtp_host
+SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
-SMTP_USER=seu_email
-SMTP_PASS=sua_senha
-SMTP_FROM=noreply@hostel.com
+SMTP_USER=seu-email@gmail.com
+SMTP_PASS=sua-senha-app-google
+SMTP_FROM=Golden Beach Guest House <seu-email@gmail.com>
+```
+
+**Variáveis TTLock** (opcional, se usar modo real):
+```
 TTLOCK_CLIENT_ID=seu_valor
 TTLOCK_CLIENT_SECRET=seu_valor
+```
+
+**Variáveis Gerais**:
+```
 NODE_ENV=production
 ```
 
-**Dica**: Copie os valores do seu arquivo `.env` local
+**⚠️ IMPORTANTE - Configurar SMTP:**
+1. Ative [Autenticação de Dois Fatores](https://myaccount.google.com/security) no Gmail
+2. Gere [App Password](https://myaccount.google.com/apppasswords) (Select "Mail" e "Windows Computer")
+3. Copie a senha de 16 caracteres para `SMTP_PASS`
 
 ### 3.3 Root Directory
 Deixe vazio (Vercel detectará automaticamente)
