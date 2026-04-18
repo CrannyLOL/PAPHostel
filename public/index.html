@@ -20,7 +20,6 @@
     </div>
     <div class="navbar-right">
       <div class="language-selector">
-        <span data-i18n="lang-label">Idioma</span>
         <div class="language-buttons">
           <button class="language-toggle" id="langBtnPt" title="Português">
             <img src="img/Pt.png" alt="Português">
@@ -150,11 +149,14 @@
   <!-- Action Buttons Section -->
   <section class="action-buttons-section">
     <div class="action-buttons-container">
-      <button class="btn-action" onclick="window.location.href='index.html'">
-        <i class="fas fa-home"></i> <span data-i18n="btn-home-page">Página Principal</span>
-      </button>
       <button class="btn-action" onclick="window.location.href='booking.html'">
         <i class="fas fa-calendar-check"></i> <span data-i18n="btn-make-booking">Fazer Reserva</span>
+      </button>
+      <button class="btn-action btn-action-admin" onclick="window.location.href='login-staff.html'">
+        <i class="fas fa-user-tie"></i> <span>Staff</span>
+      </button>
+      <button class="btn-action btn-action-admin" onclick="window.location.href='login-admin.html'">
+        <i class="fas fa-user-shield"></i> <span>Admin</span>
       </button>
     </div>
   </section>

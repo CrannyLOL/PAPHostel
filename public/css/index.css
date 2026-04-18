@@ -83,25 +83,15 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      padding: 10px 15px;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 8px;
-      border: 1px solid rgba(255, 255, 255, 0.2);
       transition: all 0.3s ease;
     }
 
     .language-selector:hover {
-      background: rgba(255, 255, 255, 0.18);
-      border-color: rgba(255, 255, 255, 0.35);
+      opacity: 0.8;
     }
 
     .language-selector span {
-      color: rgba(255, 255, 255, 0.9);
-      font-size: 0.75rem;
-      font-weight: 600;
-      white-space: nowrap;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+      display: none;
     }
 
     .language-buttons {
@@ -958,6 +948,16 @@
 
     .btn-action:active {
       transform: translateY(-1px);
+    }
+
+    .btn-action-admin {
+      background: linear-gradient(135deg, #34495E 0%, #2C3E50 100%);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-action-admin:hover {
+      background: linear-gradient(135deg, #2C3E50 0%, #1a252f 100%);
+      border-color: rgba(255, 255, 255, 0.4);
     }
 
     /* Animations */
