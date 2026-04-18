@@ -29,6 +29,16 @@ const SMTP_CONFIGURED = !!(process.env.SMTP_USER && process.env.SMTP_PASS);
 // Configurar transportador de email
 let transporter = null;
 
+console.log("=== CONFIGURAÇÃO EMAIL ===");
+console.log(`EMAIL_MODE: ${EMAIL_MODE}`);
+console.log(`SMTP_CONFIGURED: ${SMTP_CONFIGURED}`);
+console.log(`SMTP_HOST: ${process.env.SMTP_HOST || "smtp.gmail.com"}`);
+console.log(`SMTP_PORT: ${process.env.SMTP_PORT || "587"}`);
+console.log(`SMTP_USER: ${process.env.SMTP_USER ? "✓ Configurado" : "✗ Não definido"}`);
+console.log(`SMTP_PASS: ${process.env.SMTP_PASS ? "✓ Configurado" : "✗ Não definido"}`);
+console.log(`SMTP_FROM: ${process.env.SMTP_FROM || "goldenbeach@hotel.com"}`);
+console.log("========================\n");
+
 if (EMAIL_MODE === "real" && SMTP_CONFIGURED) {
   transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST || "smtp.gmail.com",
@@ -37,9 +47,21 @@ if (EMAIL_MODE === "real" && SMTP_CONFIGURED) {
     auth: {
       user: process.env.SMTP_USER,
       pass: process.env.SMTP_PASS
+    },
+    logger: true,
+    debug: true
+  });
+  
+  // Testar conexão com SMTP
+  transporter.verify((error, success) => {
+    if (error) {
+      console.error("❌ ERRO SMTP:", error.message);
+    } else {
+      console.log("✓ Conexão SMTP validada com sucesso!");
     }
   });
-  console.log("Email: Modo REAL - Emails serão enviados");
+  
+  console.log("✓ Email: Modo REAL - Emails serão enviados");
 } else {
   // Modo simulado com Nodemailer (não envia realmente, apenas escreve logs)
   transporter = nodemailer.createTransport({
@@ -48,7 +70,7 @@ if (EMAIL_MODE === "real" && SMTP_CONFIGURED) {
     secure: false,
     auth: false
   });
-  console.log(`Email: Modo ${EMAIL_MODE} - Emails serão apenas registados em logs`);
+  console.log(`⚠ Email: Modo ${EMAIL_MODE} - Emails serão apenas registados em logs`);
 }
 
 // ============================================
@@ -385,32 +407,27 @@ app.post("/api/send-invoice", async (req, res) => {
     };
 
     // Enviar email
-    try {
-      const info = await transporter.sendMail(mailOptions);
-      console.log(`[EMAIL FATURA] Enviado para: ${to} (Idioma: ${language})`);
-      console.log(`  Response ID: ${info.response || "Demo Mode"}`);
-    } catch (emailError) {
-      console.warn(`[EMAIL FATURA] Simulado (Modo ${EMAIL_MODE}):`, {
-        para: to,
-        assunto: mailOptions.subject,
-        idioma: language
-      });
-    }
+    const info = await transporter.sendMail(mailOptions);
+    console.log(`✓ [EMAIL FATURA] Enviado para: ${to} (Idioma: ${language})`);
+    console.log(`  Response: ${info.response || JSON.stringify(info).substring(0, 100)}`);
 
     res.json({
       sucesso: true,
       mensagem: language === "pt" ? "Email de fatura processado" : "Invoice email processed",
       modo: EMAIL_MODE,
       para: to,
-      idioma: language
+      idioma: language,
+      emailId: info.messageId || "N/A"
     });
 
   } catch (error) {
-    console.error("[ERRO] Enviar fatura:", error.message);
+    console.error("❌ [ERRO] Enviar fatura:", error.message);
+    console.error("Stack:", error.stack);
     res.status(500).json({
       erro: true,
       mensagem: "Erro ao enviar email de fatura",
-      detalhes: error.message
+      detalhes: error.message,
+      stack: error.stack
     });
   }
 });
