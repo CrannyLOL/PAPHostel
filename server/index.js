@@ -192,19 +192,22 @@ app.post("/api/generate-invoice-pdf", async (req, res) => {
     const buffers = [];
     doc.on("data", buffers.push.bind(buffers));
 
-    // Header com logo e título
-    doc.rect(0, 0, 595, 100).fill("#2C3E50");
-    doc.fillColor("#D4A843").fontSize(28).font("Helvetica-Bold").text("Golden Beach", 40, 25, { width: 400 });
-    doc.fillColor("rgba(255,255,255,0.8)").fontSize(12).font("Helvetica").text("GUEST HOUSE", 40, 55, { width: 400 });
-    doc.moveDown(1);
-
-    // Título do recibo
-    doc.fillColor("#2C3E50").fontSize(14).font("Helvetica-Bold");
-    doc.text(language === "pt" ? "RECIBO DE RESERVA" : "BOOKING RECEIPT", { align: "center" });
-    doc.moveDown(0.8);
+    // Header com logo e título e info à direita
+    doc.rect(0, 0, 595, 120).fill("#2C3E50");
+    
+    // Lado esquerdo: Logo
+    doc.fillColor("#D4A843").fontSize(26).font("Helvetica-Bold").text("Golden Beach Guest House", 40, 20, { width: 300 });
+    doc.fillColor("rgba(255,255,255,0.85)").fontSize(11).font("Helvetica").text("Algarve, Portugal", 40, 52);
+    
+    // Lado direito: Informações
+    doc.fillColor("rgba(255,255,255,0.9)").fontSize(11).font("Helvetica-Bold").text(language === "pt" ? "FATURA / RECIBO" : "INVOICE / RECEIPT", 380, 20, { width: 150, align: "right" });
+    doc.fillColor("rgba(255,255,255,0.8)").fontSize(10).font("Helvetica").text(`${language === "pt" ? "Data" : "Date"}: ${new Date().toLocaleDateString(language === "pt" ? "pt-PT" : "en-US")}`, 380, 50, { width: 150, align: "right" });
+    doc.text(`${language === "pt" ? "Ref" : "Ref"}: ${Math.random().toString().substring(2, 10)}`, { width: 150, align: "right" });
+    
+    doc.moveDown(2);
 
     // Seção de hóspede
-    doc.fontSize(11).font("Helvetica-Bold").text(language === "pt" ? "HÓSPEDE / GUEST" : "GUEST");
+    doc.fillColor("#2C3E50").fontSize(11).font("Helvetica-Bold").text(language === "pt" ? "HÓSPEDE / GUEST" : "GUEST");
     doc.fontSize(10).font("Helvetica");
     doc.text(`${bookingData.firstName} ${bookingData.lastName}`);
     doc.text(`Email: ${bookingData.email}`);
