@@ -33,7 +33,7 @@
       left: 0;
       right: 0;
       background: rgba(44, 62, 80, 0.97);
-      padding: 8px 30px;
+      padding: 12px 30px;
       z-index: 1000;
       display: flex;
       justify-content: space-between;
@@ -41,13 +41,13 @@
       backdrop-filter: blur(15px);
       box-shadow: 0 2px 15px rgba(0, 0, 0, 0.25);
       transition: all 0.3s ease;
-      height: 65px;
+      height: 80px;
     }
 
     .navbar.scrolled {
-      padding: 8px 30px;
+      padding: 12px 30px;
       background: rgba(44, 62, 80, 1);
-      height: 65px;
+      height: 80px;
     }
 
     .navbar-left {
@@ -58,9 +58,9 @@
     }
 
     .navbar-logo {
-      max-width: 80px;
+      max-width: 110px;
       height: auto;
-      max-height: 55px;
+      max-height: 68px;
       object-fit: contain;
     }
 
