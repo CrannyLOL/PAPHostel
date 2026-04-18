@@ -74,6 +74,66 @@
       gap: 15px;
       align-items: center;
     }
+
+    /* Language Selector */
+    .language-selector {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 15px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .language-selector:hover {
+      background: rgba(255, 255, 255, 0.18);
+      border-color: rgba(255, 255, 255, 0.35);
+    }
+
+    .language-selector span {
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 0.75rem;
+      font-weight: 600;
+      white-space: nowrap;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .language-buttons {
+      display: flex;
+      gap: 8px;
+    }
+
+    .language-toggle {
+      background: none;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      padding: 0;
+      opacity: 0.7;
+      position: relative;
+    }
+
+    .language-toggle img {
+      width: 48px;
+      height: 32px;
+      border-radius: 6px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+      display: block;
+      transition: all 0.3s ease;
+    }
+
+    .language-toggle:hover {
+      transform: translateY(-3px);
+      opacity: 1;
+    }
+
+    .language-toggle:hover img {
+      box-shadow: 0 6px 20px rgba(149, 165, 166, 0.5);
+    }
+
     .navbar a {
       color: var(--white);
       text-decoration: none;
