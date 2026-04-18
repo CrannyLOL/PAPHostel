@@ -327,6 +327,66 @@
       box-shadow: 0 6px 25px rgba(44, 62, 80, 0.4);
     }
 
+    /* === MÚLTIPLAS RESERVAS === */
+    #multiReservasContainer {
+      margin-top: 20px;
+      padding: 20px;
+      background: var(--ultra-light);
+      border-radius: 12px;
+      border: 2px solid var(--border-color);
+    }
+
+    #multiReservasContainer label {
+      display: block;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin-bottom: 15px;
+      font-size: 0.95rem;
+    }
+
+    #quartosCheckbox {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    #quartosCheckbox > div {
+      display: flex;
+      align-items: center;
+      padding: 12px;
+      background: var(--white);
+      border-radius: 8px;
+      border: 2px solid var(--border-color);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    #quartosCheckbox > div:hover {
+      border-color: var(--primary-dark);
+      box-shadow: 0 2px 8px rgba(44, 62, 80, 0.15);
+      background: #f0f5fa;
+    }
+
+    #quartosCheckbox input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      accent-color: var(--primary-dark);
+    }
+
+    #quartosCheckbox label {
+      margin-bottom: 0;
+      margin-left: 8px;
+      cursor: pointer;
+      flex: 1;
+      font-size: 0.9rem;
+    }
+
+    #quartosCheckbox label strong {
+      color: var(--primary-dark);
+      font-weight: 700;
+    }
+
     /* === RESPONSIVE === */
     @media (max-width: 1024px) {
       .navbar {
