@@ -199,15 +199,15 @@ document.addEventListener("DOMContentLoaded", () => {
       const locale = lang === "pt" ? "pt-PT" : "en-GB";
       const emailWarning = emailNaoEnviado 
         ? (lang === "pt" 
-          ? "\n⚠️ AVISO: O código pode não ter sido enviado por email. Verifique a caixa de spam ou contacte-nos." 
-          : "\n⚠️ WARNING: The code may not have been sent by email. Check your spam folder or contact us.")
+          ? "\n⚠️ AVISO: O código pode não ter sido enviado por email. Verifique a caixa de spam." 
+          : "\n⚠️ WARNING: The code may not have been sent by email. Check your spam folder.")
         : (lang === "pt"
-          ? "\nO código foi enviado também por email."
-          : "\nThe code was also sent by email.");
+          ? "\n📧 O código foi enviado por email."
+          : "\n📧 The code has been sent by email.");
       
       const mensagem = lang === "pt"
-        ? `✓ Self Check-in realizado com sucesso!\n\nNome: ${reserva.nome_hospede}\nQuarto: ${reserva.quarto || reserva.room_id}\nCódigo TTLock: ${codigoTTLock}\nEntrada: ${dataEnt.toLocaleString(locale)}\nSaída: ${dataSai.toLocaleString(locale)}\n\nBem-vindo ao Golden Beach Guest House!${emailWarning}`
-        : `✓ Self Check-in successful!\n\nName: ${reserva.nome_hospede}\nRoom: ${reserva.quarto || reserva.room_id}\nTTLock Code: ${codigoTTLock}\nCheck-in: ${dataEnt.toLocaleString(locale)}\nCheck-out: ${dataSai.toLocaleString(locale)}\n\nWelcome to Golden Beach Guest House!${emailWarning}`;
+        ? `✓ CHECK-IN REALIZADO COM SUCESSO!\n\n🏠 Quarto: ${reserva.quarto || reserva.room_id}\n🔑 Código TTLock: ${codigoTTLock}\n📅 Entrada: ${dataEnt.toLocaleString(locale)}\n📅 Saída: ${dataSai.toLocaleString(locale)}\n\nBem-vindo ao Golden Beach Guest House!${emailWarning}`
+        : `✓ CHECK-IN SUCCESSFUL!\n\n🏠 Room: ${reserva.quarto || reserva.room_id}\n🔑 TTLock Code: ${codigoTTLock}\n📅 Check-in: ${dataEnt.toLocaleString(locale)}\n📅 Check-out: ${dataSai.toLocaleString(locale)}\n\nWelcome to Golden Beach Guest House!${emailWarning}`;
 
       alert(mensagem);
       form.reset();

@@ -155,6 +155,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         console.log("Reserva criada:", reservaDoc.id);
 
+        // Determinar idioma baseado na nacionalidade do cliente
+        const idiomaCliente = obterIdiomaDeNacionalidade(bookingData.nationality || "português");
+
         updateStatus(
           lang === "pt" ? "Gerando recibo..." : "Generating receipt...",
           "loading"
@@ -177,9 +180,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         const pdfData = await pdfResponse.json();
         const pdfBase64 = pdfData.pdfBase64;
-
-        // Determinar idioma baseado na nacionalidade do cliente
-        const idiomaCliente = obterIdiomaDeNacionalidade(bookingData.nationality || "português");
 
         updateStatus(
           lang === "pt" ? "Enviando fatura para email..." : "Sending invoice to email...",
@@ -242,8 +242,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         // Sucesso
         updateStatus(
           lang === "pt" 
-            ? `Sucesso! Código de acesso: ${codigoTTLock}\n\nVerifique seu email para detalhes completos.` 
-            : `Success! Access code: ${codigoTTLock}\n\nCheck your email for complete details.`,
+            ? `✓ Reserva confirmada!\n\nCódigo de acesso: ${codigoTTLock}\n\n📧 Fatura e código TTLOCK foram enviados para seu email.` 
+            : `✓ Booking confirmed!\n\nAccess code: ${codigoTTLock}\n\n📧 Invoice and TTLOCK code have been sent to your email.`,
           "success"
         );
 

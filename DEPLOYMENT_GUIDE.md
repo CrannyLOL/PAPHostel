@@ -154,4 +154,49 @@ Vercel fará deploy automaticamente após fazer push para `main`
 
 ---
 
-**Perguntas?** Verifique os [docs do Vercel](https://vercel.com/docs) ou [docs do Express](https://expressjs.com/)
+## 🤖 Auto-Deploy com GitHub Actions
+
+Para configurar o auto-deploy **automático** sempre que faz push no GitHub:
+
+### 5.1 Gerar Tokens Vercel
+
+1. Aceda a https://vercel.com/account/tokens
+2. Clique em **Create** para novo token
+3. Copie o token gerado
+
+### 5.2 Configurar Secrets no GitHub
+
+1. No seu repositório GitHub: **Settings** → **Secrets and variables** → **Actions**
+2. Clique em **New repository secret**
+3. Adicione os seguintes secrets:
+
+| Secret | Valor |
+|--------|-------|
+| `VERCEL_TOKEN` | Token do Vercel (gerado acima) |
+| `VERCEL_ORG_ID` | ID da conta/organização Vercel |
+| `VERCEL_PROJECT_ID` | ID do projeto Vercel |
+
+**Como encontrar os IDs:**
+- Aceda ao seu projeto em Vercel
+- **Settings** → **General**
+- Procure "Project ID" e "Team/Org ID"
+
+### 5.3 Workflow Automático
+
+O workflow já está configurado em `.github/workflows/deploy.yml`
+
+Sempre que faz push para `main` ou `master`:
+```bash
+git push origin main
+```
+
+O GitHub Actions irá:
+1. ✅ Instalar dependências
+2. ✅ Fazer build
+3. ✅ Deploy automático no Vercel
+
+**Verifique o status em: GitHub → Actions**
+
+---
+
+**Perguntas?** Consulte [SETUP_AUTO_DEPLOY.md](./SETUP_AUTO_DEPLOY.md) para mais detalhes.
