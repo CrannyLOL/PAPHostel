@@ -11,6 +11,8 @@ const translations = {
     "btn-check-in": "Self Check-in",
     "btn-booking": "Criar Reserva",
     "btn-register": "Criar Conta",
+    "btn-home-page": "Página Principal",
+    "btn-make-booking": "Fazer Reserva",
     "lang-label": "Selecionar Idioma",
     
     // Home.html
@@ -122,6 +124,8 @@ const translations = {
     "btn-check-in": "Self Check-in",
     "btn-booking": "Make Booking",
     "btn-register": "Sign Up",
+    "btn-home-page": "Home Page",
+    "btn-make-booking": "Make Booking",
     "lang-label": "Language",
     
     // Home.html

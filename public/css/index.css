@@ -901,6 +901,65 @@
       }
     }
 
+    /* Action Buttons Section */
+    .action-buttons-section {
+      background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+      padding: 60px 20px;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 180px;
+    }
+
+    .action-buttons-container {
+      display: flex;
+      gap: 30px;
+      justify-content: center;
+      flex-wrap: wrap;
+      max-width: 1000px;
+    }
+
+    .btn-action {
+      background: linear-gradient(135deg, #2C3E50 0%, #34495E 100%);
+      color: white;
+      border: none;
+      padding: 18px 50px;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: 'Montserrat', sans-serif;
+      min-width: 240px;
+      justify-content: center;
+    }
+
+    .btn-action i {
+      font-size: 1.3rem;
+      transition: transform 0.3s ease;
+    }
+
+    .btn-action:hover {
+      background: linear-gradient(135deg, #34495E 0%, #2C3E50 100%);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-action:hover i {
+      transform: scale(1.15);
+    }
+
+    .btn-action:active {
+      transform: translateY(-1px);
+    }
+
     /* Animations */
     @keyframes fadeInUp {
       from {
