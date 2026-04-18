@@ -202,9 +202,11 @@ app.post("/api/generate-invoice-pdf", async (req, res) => {
     // Lado direito: Informações
     doc.fillColor("rgba(255,255,255,0.9)").fontSize(11).font("Helvetica-Bold").text(language === "pt" ? "FATURA / RECIBO" : "INVOICE / RECEIPT", 380, 20, { width: 150, align: "right" });
     doc.fillColor("rgba(255,255,255,0.8)").fontSize(10).font("Helvetica").text(`${language === "pt" ? "Data" : "Date"}: ${new Date().toLocaleDateString(language === "pt" ? "pt-PT" : "en-US")}`, 380, 50, { width: 150, align: "right" });
-    doc.text(`${language === "pt" ? "Ref" : "Ref"}: ${Math.random().toString().substring(2, 10)}`, { width: 150, align: "right" });
+    doc.text(`${language === "pt" ? "Ref" : "Ref"}: ${Math.random().toString().substring(2, 10)}`, 380, 70, { width: 150, align: "right" });
     
-    doc.moveDown(2);
+    doc.moveTo(40, 130).lineTo(555, 130).stroke();
+    doc.y = 140;
+    doc.moveDown(0.5);
 
     // Seção de hóspede
     doc.fillColor("#2C3E50").fontSize(11).font("Helvetica-Bold").text(language === "pt" ? "HÓSPEDE / GUEST" : "GUEST");
@@ -231,10 +233,11 @@ app.post("/api/generate-invoice-pdf", async (req, res) => {
     doc.fontSize(10).font("Helvetica-Bold").fillColor("#2C3E50");
     const descWidth = 320;
     const valueWidth = 140;
-    doc.text(language === "pt" ? "DESCRIÇÃO" : "DESCRIPTION", 40, doc.y, { width: descWidth });
-    doc.text(language === "pt" ? "VALOR" : "VALUE", 370, doc.y - 10, { align: "right", width: valueWidth });
+    const headerY = doc.y;
+    doc.text(language === "pt" ? "DESCRIÇÃO" : "DESCRIPTION", 40, headerY, { width: descWidth });
+    doc.text(language === "pt" ? "VALOR" : "VALUE", 370, headerY, { align: "right", width: valueWidth });
     
-    doc.moveDown(0.3);
+    doc.moveDown(0.5);
     doc.moveTo(40, doc.y).lineTo(555, doc.y).stroke();
     doc.moveDown(0.3);
 
