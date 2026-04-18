@@ -58,9 +58,10 @@
     }
 
     .navbar-logo {
-      max-width: 50px;
+      max-width: 80px;
       height: auto;
-      max-height: 45px;
+      max-height: 55px;
+      object-fit: contain;
     }
 
     .navbar h2 {
