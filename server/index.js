@@ -185,28 +185,34 @@ app.post("/api/generate-invoice-pdf", async (req, res) => {
     // Criar documento PDF
     const doc = new PDFDocument({
       size: "A4",
-      margin: 50
+      margin: 40
     });
 
     // Coletar dados do PDF em buffer
     const buffers = [];
     doc.on("data", buffers.push.bind(buffers));
 
-    // Header com logo e título e info à direita
-    doc.rect(0, 0, 595, 120).fill("#2C3E50");
+    // ===== HEADER - Fundo Escuro =====
+    doc.rect(0, 0, 612, 100).fill("#2C3E50");
     
-    // Lado esquerdo: Logo
-    doc.fillColor("#D4A843").fontSize(26).font("Helvetica-Bold").text("Golden Beach Guest House", 40, 20, { width: 300 });
-    doc.fillColor("rgba(255,255,255,0.85)").fontSize(11).font("Helvetica").text("Algarve, Portugal", 40, 52);
+    // Lado esquerdo - Logo (esquerda)
+    doc.fillColor("#D4A843").fontSize(24).font("Helvetica-Bold");
+    doc.text("Golden Beach", 40, 15, { width: 250 });
+    doc.fillColor("rgba(255,255,255,0.85)").fontSize(10).font("Helvetica");
+    doc.text("Guest House", 40, 40);
+    doc.text("Algarve, Portugal", 40, 56);
     
-    // Lado direito: Informações
-    doc.fillColor("rgba(255,255,255,0.9)").fontSize(11).font("Helvetica-Bold").text(language === "pt" ? "FATURA / RECIBO" : "INVOICE / RECEIPT", 380, 20, { width: 150, align: "right" });
-    doc.fillColor("rgba(255,255,255,0.8)").fontSize(10).font("Helvetica").text(`${language === "pt" ? "Data" : "Date"}: ${new Date().toLocaleDateString(language === "pt" ? "pt-PT" : "en-US")}`, 380, 50, { width: 150, align: "right" });
-    doc.text(`${language === "pt" ? "Ref" : "Ref"}: ${Math.random().toString().substring(2, 10)}`, 380, 70, { width: 150, align: "right" });
+    // Lado direito - Informações (direita)
+    doc.fillColor("rgba(255,255,255,0.9)").fontSize(14).font("Helvetica-Bold");
+    doc.text(language === "pt" ? "FATURA" : "INVOICE", 450, 15, { width: 100, align: "right" });
     
-    doc.moveTo(40, 130).lineTo(555, 130).stroke();
-    doc.y = 140;
-    doc.moveDown(0.5);
+    doc.fillColor("rgba(255,255,255,0.8)").fontSize(9).font("Helvetica");
+    doc.text(`Data: ${new Date().toLocaleDateString(language === "pt" ? "pt-PT" : "en-US")}`, 450, 38, { width: 100, align: "right" });
+    doc.text(`Ref: ${Math.random().toString().substring(2, 10)}`, 450, 54, { width: 100, align: "right" });
+    
+    // Depois do header, resetar y
+    doc.y = 115;
+    doc.moveDown(0.3);
 
     // Seção de hóspede
     doc.fillColor("#2C3E50").fontSize(11).font("Helvetica-Bold").text(language === "pt" ? "HÓSPEDE / GUEST" : "GUEST");
