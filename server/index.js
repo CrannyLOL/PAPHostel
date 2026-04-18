@@ -185,7 +185,7 @@ app.post("/api/generate-invoice-pdf", async (req, res) => {
     // Criar documento PDF
     const doc = new PDFDocument({
       size: "A4",
-      margin: 40
+      margin: 0
     });
 
     // Coletar dados do PDF em buffer
@@ -193,99 +193,117 @@ app.post("/api/generate-invoice-pdf", async (req, res) => {
     doc.on("data", buffers.push.bind(buffers));
 
     // ===== HEADER - Fundo Escuro =====
-    doc.rect(0, 0, 612, 100).fill("#2C3E50");
+    doc.rect(0, 0, 612, 120).fill("#2C3E50");
     
-    // Lado esquerdo - Logo (esquerda)
-    doc.fillColor("#D4A843").fontSize(24).font("Helvetica-Bold");
-    doc.text("Golden Beach", 40, 15, { width: 250 });
-    doc.fillColor("rgba(255,255,255,0.85)").fontSize(10).font("Helvetica");
-    doc.text("Guest House", 40, 40);
-    doc.text("Algarve, Portugal", 40, 56);
+    // Lado ESQUERDO
+    doc.fillColor("#D4A843").fontSize(22).font("Helvetica-Bold");
+    doc.text("Golden Beach", 50, 20, { width: 250, align: "left" });
+    doc.fillColor("rgba(255,255,255,0.8)").fontSize(11).font("Helvetica");
+    doc.text("Guest House", 50, 48, { width: 250, align: "left" });
+    doc.text("Algarve, Portugal", 50, 65, { width: 250, align: "left" });
     
-    // Lado direito - Informações (direita)
-    doc.fillColor("rgba(255,255,255,0.9)").fontSize(14).font("Helvetica-Bold");
-    doc.text(language === "pt" ? "FATURA" : "INVOICE", 450, 15, { width: 100, align: "right" });
+    // Lado DIREITO - Informações da Fatura
+    doc.fillColor("rgba(255,255,255,0.95)").fontSize(16).font("Helvetica-Bold");
+    doc.text(language === "pt" ? "FATURA" : "INVOICE", 400, 25, { width: 160, align: "right" });
     
-    doc.fillColor("rgba(255,255,255,0.8)").fontSize(9).font("Helvetica");
-    doc.text(`Data: ${new Date().toLocaleDateString(language === "pt" ? "pt-PT" : "en-US")}`, 450, 38, { width: 100, align: "right" });
-    doc.text(`Ref: ${Math.random().toString().substring(2, 10)}`, 450, 54, { width: 100, align: "right" });
-    
-    // Depois do header, resetar y
-    doc.y = 115;
-    doc.moveDown(0.3);
+    doc.fillColor("rgba(255,255,255,0.75)").fontSize(10).font("Helvetica");
+    doc.text(`Data: ${new Date().toLocaleDateString(language === "pt" ? "pt-PT" : "en-US")}`, 400, 55, { width: 160, align: "right" });
+    doc.text(`Ref: ${Math.random().toString().substring(2, 10)}`, 400, 72, { width: 160, align: "right" });
 
-    // Seção de hóspede
-    doc.fillColor("#2C3E50").fontSize(11).font("Helvetica-Bold").text(language === "pt" ? "HÓSPEDE / GUEST" : "GUEST");
-    doc.fontSize(10).font("Helvetica");
-    doc.text(`${bookingData.firstName} ${bookingData.lastName}`);
-    doc.text(`Email: ${bookingData.email}`);
-    doc.text(`Telefone / Phone: ${bookingData.phone || "N/A"}`);
-    doc.moveDown(0.6);
+    // ===== CONTEÚDO PRINCIPAL (com margens)
+    let yPosition = 145;
 
-    // Seção de reserva
-    doc.fontSize(11).font("Helvetica-Bold").text(language === "pt" ? "DETALHES DA RESERVA" : "BOOKING DETAILS");
-    doc.fontSize(10).font("Helvetica");
-    doc.text(`${language === "pt" ? "Quarto / Room" : "Room"}: ${bookingData.quarto}`);
-    doc.text(`${language === "pt" ? "Check-in" : "Check-in"}: ${new Date(bookingData.entrada).toLocaleDateString(language === "pt" ? "pt-PT" : "en-US")}`);
-    doc.text(`${language === "pt" ? "Check-out" : "Check-out"}: ${new Date(bookingData.saida).toLocaleDateString(language === "pt" ? "pt-PT" : "en-US")}`);
-    doc.text(`${language === "pt" ? "Noites / Nights" : "Nights"}: ${bookingData.nights}`);
-    doc.moveDown(0.6);
+    // Seção: Hóspede
+    doc.fillColor("#2C3E50").fontSize(12).font("Helvetica-Bold");
+    doc.text(language === "pt" ? "HÓSPEDE / GUEST" : "GUEST", 50, yPosition);
+    yPosition += 25;
 
-    // Separador
-    doc.moveTo(40, doc.y).lineTo(555, doc.y).stroke();
-    doc.moveDown(0.4);
-    
-    // Headers da tabela
-    doc.fontSize(10).font("Helvetica-Bold").fillColor("#2C3E50");
-    const descWidth = 320;
-    const valueWidth = 140;
-    const headerY = doc.y;
-    doc.text(language === "pt" ? "DESCRIÇÃO" : "DESCRIPTION", 40, headerY, { width: descWidth });
-    doc.text(language === "pt" ? "VALOR" : "VALUE", 370, headerY, { align: "right", width: valueWidth });
-    
-    doc.moveDown(0.5);
-    doc.moveTo(40, doc.y).lineTo(555, doc.y).stroke();
-    doc.moveDown(0.3);
+    doc.fillColor("#333").fontSize(10).font("Helvetica");
+    doc.text(`${bookingData.firstName} ${bookingData.lastName}`, 50, yPosition);
+    yPosition += 15;
+    doc.text(`Email: ${bookingData.email}`, 50, yPosition);
+    yPosition += 15;
+    doc.text(`Telefone: ${bookingData.phone || "N/A"}`, 50, yPosition);
+    yPosition += 25;
 
-    // Valores
-    doc.font("Helvetica").fontSize(10).fillColor("#2C3E50");
-    const roomLineY = doc.y;
-    doc.text(`${language === "pt" ? "Alojamento" : "Accommodation"} (${bookingData.nights}x ${bookingData.roomPrice.toFixed(2)} EUR)`, 40, roomLineY, { width: descWidth });
+    // Seção: Detalhes da Reserva
+    doc.fillColor("#2C3E50").fontSize(12).font("Helvetica-Bold");
+    doc.text(language === "pt" ? "DETALHES DA RESERVA" : "BOOKING DETAILS", 50, yPosition);
+    yPosition += 25;
+
+    doc.fillColor("#333").fontSize(10).font("Helvetica");
+    doc.text(`${language === "pt" ? "Quarto" : "Room"}: ${bookingData.quarto}`, 50, yPosition);
+    yPosition += 15;
+    doc.text(`${language === "pt" ? "Check-in" : "Check-in"}: ${new Date(bookingData.entrada).toLocaleDateString(language === "pt" ? "pt-PT" : "en-US")}`, 50, yPosition);
+    yPosition += 15;
+    doc.text(`${language === "pt" ? "Check-out" : "Check-out"}: ${new Date(bookingData.saida).toLocaleDateString(language === "pt" ? "pt-PT" : "en-US")}`, 50, yPosition);
+    yPosition += 15;
+    doc.text(`${language === "pt" ? "Noites" : "Nights"}: ${bookingData.nights}`, 50, yPosition);
+    yPosition += 35;
+
+    // Linha separadora
+    doc.strokeColor("#D4A843").lineWidth(2);
+    doc.moveTo(50, yPosition).lineTo(562, yPosition).stroke();
+    yPosition += 20;
+
+    // Tabela de Valores
+    doc.fillColor("#2C3E50").fontSize(11).font("Helvetica-Bold");
+    doc.text(language === "pt" ? "DESCRIÇÃO" : "DESCRIPTION", 50, yPosition);
+    doc.text(language === "pt" ? "VALOR" : "VALUE", 480, yPosition, { width: 80, align: "right" });
+    yPosition += 20;
+
+    doc.strokeColor("#DDD").lineWidth(1);
+    doc.moveTo(50, yPosition).lineTo(562, yPosition).stroke();
+    yPosition += 15;
+
+    // Linha 1: Alojamento
+    doc.fillColor("#333").fontSize(10).font("Helvetica");
+    doc.text(`${language === "pt" ? "Alojamento" : "Accommodation"} (${bookingData.nights}x €${bookingData.roomPrice.toFixed(2)})`, 50, yPosition);
     const roomTotal = (bookingData.roomPrice * bookingData.nights).toFixed(2);
-    doc.text(roomTotal + " EUR", 370, roomLineY, { align: "right", width: valueWidth });
-    doc.moveDown(0.3);
-    
+    doc.text(`€${roomTotal}`, 480, yPosition, { width: 80, align: "right" });
+    yPosition += 20;
+
+    // Linha 2: Extras (se houver)
     if (bookingData.extrasTotal && bookingData.extrasTotal > 0) {
-      const extrasLineY = doc.y;
-      doc.text(`${language === "pt" ? "Extras" : "Extras"}`, 40, extrasLineY, { width: descWidth });
-      doc.text(bookingData.extrasTotal.toFixed(2) + " EUR", 370, extrasLineY, { align: "right", width: valueWidth });
-      doc.moveDown(0.3);
+      doc.text(`${language === "pt" ? "Extras" : "Extras"}`, 50, yPosition);
+      doc.text(`€${bookingData.extrasTotal.toFixed(2)}`, 480, yPosition, { width: 80, align: "right" });
+      yPosition += 20;
     }
 
-    doc.moveTo(40, doc.y).lineTo(555, doc.y).stroke();
-    doc.moveDown(0.3);
+    // Linha separadora
+    doc.strokeColor("#999").lineWidth(1);
+    doc.moveTo(50, yPosition).lineTo(562, yPosition).stroke();
+    yPosition += 20;
 
-    // Total
-    doc.fontSize(12).font("Helvetica-Bold").fillColor("#2980B9");
-    const totalLineY = doc.y;
-    doc.text(language === "pt" ? "TOTAL A PAGAR" : "TOTAL TO PAY", 40, totalLineY, { width: descWidth });
-    doc.text(bookingData.total.toFixed(2) + " EUR", 370, totalLineY, { align: "right", width: valueWidth });
-    
-    doc.moveDown(1);
-    doc.moveTo(40, doc.y).lineTo(555, doc.y).stroke();
-    doc.moveDown(1);
+    // TOTAL
+    doc.fillColor("#2980B9").fontSize(13).font("Helvetica-Bold");
+    doc.text(language === "pt" ? "TOTAL A PAGAR" : "TOTAL TO PAY", 50, yPosition);
+    doc.text(`€${bookingData.total.toFixed(2)}`, 480, yPosition, { width: 80, align: "right" });
+    yPosition += 35;
 
     // Rodapé
-    doc.fontSize(8).font("Helvetica").fillColor("#7F8C8D");
-    doc.text(language === "pt" 
-      ? "Recibo gerado em: " + new Date().toLocaleString("pt-PT")
-      : "Receipt generated on: " + new Date().toLocaleString("en-US"), 
-      { align: "center" });
-    doc.text("Golden Beach Guest House © 2026", { align: "center" });
-    doc.text(language === "pt" 
-      ? "Hostel com Self Check-in Digital" 
-      : "Hostel with Digital Self Check-in", 
-      { align: "center" });
+    doc.strokeColor("#DDD").lineWidth(1);
+    doc.moveTo(50, yPosition).lineTo(562, yPosition).stroke();
+    yPosition += 15;
+
+    doc.fillColor("#777").fontSize(8).font("Helvetica");
+    doc.text(
+      language === "pt"
+        ? `Gerado em: ${new Date().toLocaleString("pt-PT")}`
+        : `Generated on: ${new Date().toLocaleString("en-US")}`,
+      50,
+      yPosition,
+      { width: 512, align: "center" }
+    );
+    yPosition += 12;
+    doc.text("Golden Beach Guest House © 2026", 50, yPosition, { width: 512, align: "center" });
+    yPosition += 12;
+    doc.text(
+      language === "pt" ? "Hostel com Self Check-in Digital" : "Hostel with Digital Self Check-in",
+      50,
+      yPosition,
+      { width: 512, align: "center" }
+    );
 
     // Finalizar documento
     doc.end();
