@@ -56,6 +56,65 @@ if (EMAIL_MODE === "real" && SMTP_CONFIGURED) {
 // ============================================
 
 /**
+ * POST /api/test-email
+ * Testa se os emails estão funcionando
+ */
+app.post("/api/test-email", async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({
+        erro: true,
+        mensagem: "Email é obrigatório"
+      });
+    }
+
+    const mailOptions = {
+      from: process.env.SMTP_FROM || process.env.SMTP_USER || "goldenbeach@hotel.com",
+      to: email,
+      subject: "🧪 Teste de Email - Golden Beach Guest House",
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <div style="background: linear-gradient(135deg, #2C3E50 0%, #34495E 100%); color: white; padding: 30px; border-radius: 8px 8px 0 0; text-align: center;">
+            <h2>Golden Beach Guest House</h2>
+            <p>Teste de Configuração de Email</p>
+          </div>
+          <div style="background: #f5f5f5; padding: 30px; border-radius: 0 0 8px 8px;">
+            <p>✅ <strong>Sucesso!</strong> Os emails estão funcionando corretamente.</p>
+            <p>Data/Hora: ${new Date().toLocaleString('pt-PT')}</p>
+            <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;">
+            <p style="color: #666; font-size: 12px;">Este é um email de teste. Se o recebeu, significa que o sistema está pronto para enviar faturas e códigos de acesso.</p>
+          </div>
+        </div>
+      `
+    };
+
+    // Enviar email de teste
+    await transporter.sendMail(mailOptions);
+    
+    console.log(`[EMAIL TESTE] Enviado para: ${email}`);
+
+    res.json({
+      sucesso: true,
+      mensagem: "Email de teste enviado com sucesso!",
+      para: email,
+      modo: EMAIL_MODE
+    });
+
+  } catch (error) {
+    console.error("[ERRO] Email de teste:", error.message);
+    res.status(500).json({
+      erro: true,
+      mensagem: "Erro ao enviar email de teste",
+      detalhes: error.message,
+      modo: EMAIL_MODE,
+      dica: EMAIL_MODE === "log" ? "Mude EMAIL_MODE para 'real' no .env" : "Verifique as credenciais SMTP"
+    });
+  }
+});
+
+/**
  * POST /api/gerar-codigo
  * Gera um código de acesso para a reserva
  */
