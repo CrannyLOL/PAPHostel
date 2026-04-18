@@ -65,12 +65,17 @@
     }
 
     .navbar h2 {
-      display: none;
+      color: rgba(255, 255, 255, 0.95);
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      margin: 0;
+      text-transform: uppercase;
     }
 
     .navbar-right {
       display: flex;
-      gap: 15px;
+      gap: 20px;
       align-items: center;
     }
 
@@ -130,6 +135,24 @@
 
     .language-toggle:hover img {
       box-shadow: 0 6px 20px rgba(149, 165, 166, 0.5);
+    }
+
+    .navbar a {
+      color: rgba(255, 255, 255, 0.9);
+      text-decoration: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      font-size: 0.8rem;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .navbar a:hover {
+      color: white;
+      background: rgba(255, 255, 255, 0.15);
+      transform: translateY(-2px);
     }
 
     /* Video Background Hero */
