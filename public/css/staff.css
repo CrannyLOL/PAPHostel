@@ -32,9 +32,13 @@
       display: flex; justify-content: space-between; align-items: center;
       backdrop-filter: blur(15px);
       box-shadow: 0 2px 20px rgba(0,0,0,0.15);
+      transition: transform 0.3s ease-in-out;
+    }
+    .navbar.navbar-hidden {
+      transform: translateY(-100%);
     }
     .navbar-left { display: flex; align-items: center; gap: 16px; }
-    .navbar-logo { max-width: 150px; height: auto; }
+    .navbar-logo { max-width: 200px; height: auto; }
 
     .navbar-left a {
       cursor: pointer;

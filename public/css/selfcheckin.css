@@ -70,7 +70,11 @@
       backdrop-filter: blur(15px);
       border-bottom: none;
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      transition: all 0.3s ease;
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .navbar.navbar-hidden {
+      transform: translateY(-100%);
     }
 
     .navbar.scrolled {
@@ -86,7 +90,7 @@
     }
 
     .navbar-logo {
-      max-width: 150px;
+      max-width: 200px;
       height: auto;
     }
 
