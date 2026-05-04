@@ -596,5 +596,21 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
+  // Admin button - only allow if admin is logged in
+  const adminBtn = document.getElementById("adminBtn");
+  if (adminBtn) {
+    adminBtn.addEventListener("click", () => {
+      const adminLoggedIn = localStorage.getItem("adminLoggedIn");
+      if (adminLoggedIn === "true") {
+        // Already logged in as admin, go directly to admin panel
+        window.location.href = "admin.html";
+      } else {
+        // Not logged in as admin, redirect to admin login
+        alert("Por favor faça login com credenciais de Admin para aceder ao painel de administração.");
+        window.location.href = "login-admin.html";
+      }
+    });
+  }
+
   await carregarTudo();
 });
