@@ -34,7 +34,16 @@
       box-shadow: 0 2px 20px rgba(0,0,0,0.15);
     }
     .navbar-left { display: flex; align-items: center; gap: 16px; }
-    .navbar-logo { max-width: 120px; height: auto; }
+    .navbar-logo { max-width: 150px; height: auto; }
+
+    .navbar-left a {
+      cursor: pointer;
+      transition: opacity 0.3s ease;
+    }
+
+    .navbar-left a:hover {
+      opacity: 0.8;
+    }
     .navbar h1 { display: none; }
     .navbar-links { display: flex; gap: 10px; align-items: center; }
     .navbar a {
@@ -279,7 +288,7 @@
     }
     @media (max-width: 768px) {
       .navbar { padding: 10px 16px; }
-      .navbar-logo { max-width: 80px; }
+      .navbar-logo { max-width: 100px; }
       .page-wrapper { padding: 80px 14px 30px; }
       .quick-stats { flex-direction: column; }
       .card-header, .card-body { padding: 14px 16px; }

@@ -26,7 +26,9 @@
   <!-- Navbar -->
   <div class="navbar">
     <div class="navbar-left">
-      <img src="img/logo.png" alt="Logo" class="navbar-logo">
+      <a href="index.html" style="display: flex; align-items: center;">
+        <img src="img/logo.png" alt="Logo" class="navbar-logo">
+      </a>
     </div>
     <div class="navbar-right">
       <div class="language-selector">
@@ -422,22 +424,48 @@
       return pdf;
     }
 
-    // Send invoice email via server
-    async function sendInvoiceEmail(pdfBase64) {
+    // Generate and send invoice via server
+    async function sendInvoiceEmail() {
       try {
-        await fetch("/api/send-invoice", {
+        // Gerar PDF no servidor
+        const pdfResponse = await fetch("/api/generate-invoice-pdf", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            bookingData: booking,
+            language: lang === "pt" ? "pt" : "en"
+          })
+        });
+
+        if (!pdfResponse.ok) {
+          throw new Error("Erro ao gerar PDF no servidor");
+        }
+
+        const pdfData = await pdfResponse.json();
+        const pdfBase64 = pdfData.pdfBase64;
+
+        // Enviar email com fatura
+        const emailResponse = await fetch("/api/send-invoice", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             to: booking.email,
-            subject: `Golden Beach Guest House - Fatura Reserva`,
+            subject: lang === "pt" ? `Golden Beach Guest House - Fatura Reserva` : `Golden Beach Guest House - Booking Invoice`,
             guestName: booking.firstName + " " + booking.lastName,
-            pdfBase64: pdfBase64
+            pdfBase64: pdfBase64,
+            language: lang === "pt" ? "pt" : "en",
+            bookingData: booking
           })
         });
-        console.log("Fatura enviada com sucesso para:", booking.email);
+
+        if (!emailResponse.ok) {
+          throw new Error("Erro ao enviar email");
+        }
+
+        console.log("✓ Fatura enviada com sucesso para:", booking.email);
       } catch (err) {
-        console.warn("Email não enviado (servidor não configurado):", err.message);
+        console.error("Erro ao enviar fatura:", err.message);
+        console.warn("A fatura pode não ter sido enviada. Tente novamente mais tarde.");
       }
     }
 
@@ -456,23 +484,11 @@
         <strong>Check-in:</strong> ${entradaDate.toLocaleDateString('pt-PT', opts)} às ${booking.hora_checkin}<br>
         <strong>Check-out:</strong> ${saidaDate.toLocaleDateString('pt-PT', opts)} às ${booking.hora_checkout}<br>
         <strong>Total:</strong> ${booking.total.toFixed(2)}€<br><br>
-        <em>O código de acesso para a fechadura TTLock será gerado quando você realizar o Self Check-in na página de acesso.</em>
+        <em>A sua fatura foi enviada para ${booking.email}</em>
       `;
 
-      // Generate PDF and email it
-      try {
-        const pdf = await generateInvoicePDF();
-        const pdfBase64 = pdf.output("datauristring").split(",")[1];
-
-        // Auto-download PDF
-        const invoiceRef = new Date().getTime().toString().slice(-8);
-        pdf.save(`Fatura_GoldenBeach_${invoiceRef}.pdf`);
-
-        // Send via email
-        await sendInvoiceEmail(pdfBase64);
-      } catch (err) {
-        console.warn("PDF/Email error:", err);
-      }
+      // Gerar e enviar fatura por email
+      await sendInvoiceEmail();
     }
 
     // PayPal Buttons

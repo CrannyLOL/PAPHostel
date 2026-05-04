@@ -52,8 +52,17 @@
     }
 
     .navbar-logo {
-      max-width: 120px;
+      max-width: 150px;
       height: auto;
+    }
+
+    .navbar-left a {
+      cursor: pointer;
+      transition: opacity 0.3s ease;
+    }
+
+    .navbar-left a:hover {
+      opacity: 0.8;
     }
 
     .navbar h2 {

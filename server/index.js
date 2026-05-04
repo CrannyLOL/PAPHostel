@@ -218,8 +218,6 @@ app.post("/api/generate-invoice-pdf", async (req, res) => {
     doc.rect(0, 0, 612, 120).fill("#2C3E50");
     
     // Lado ESQUERDO
-    doc.fillColor("#D4A843").fontSize(22).font("Helvetica-Bold");
-    doc.text("Golden Beach", 50, 20, { width: 250, align: "left" });
     doc.fillColor("rgba(255,255,255,0.8)").fontSize(11).font("Helvetica");
     doc.text("Guest House", 50, 48, { width: 250, align: "left" });
     doc.text("Algarve, Portugal", 50, 65, { width: 250, align: "left" });

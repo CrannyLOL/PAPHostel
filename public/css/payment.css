@@ -65,8 +65,17 @@
       gap: 20px;
     }
     .navbar-logo {
-      max-width: 120px;
+      max-width: 150px;
       height: auto;
+    }
+
+    .navbar-left a {
+      cursor: pointer;
+      transition: opacity 0.3s ease;
+    }
+
+    .navbar-left a:hover {
+      opacity: 0.8;
     }
     .navbar h2 { display: none; }
     .navbar-right {
@@ -408,7 +417,7 @@
 
     @media (max-width: 768px) {
       .navbar { padding: 15px 20px; }
-      .navbar-logo { max-width: 60px; }
+      .navbar-logo { max-width: 75px; }
       .payment-header h1 { font-size: 1.8rem; }
       .payment-section { padding: 25px 20px; }
       .container { padding: 20px 15px; }

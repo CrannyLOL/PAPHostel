@@ -1,3 +1,19 @@
+/**
+ * STAFF PANEL - LIMITED ACCESS
+ * 
+ * STAFF PERMISSIONS:
+ * - Can view calendar and room occupancy
+ * - Can manage room blockings
+ * - Can view booking dates and guest names
+ * 
+ * RESTRICTED (ADMIN ONLY):
+ * - Cannot access guest account details (email, password, phone, CC, etc.)
+ * - Cannot view financial information
+ * - Cannot manage other staff accounts
+ * - Cannot access admin panel
+ * - Cannot export guest account data
+ */
+
 import { db } from "./firebase.js";
 import {
   collection,

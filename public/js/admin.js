@@ -1,3 +1,14 @@
+/**
+ * ADMIN PANEL - RESTRICTED ACCESS
+ * 
+ * SECURITY RESTRICTIONS:
+ * - Only users with adminLoggedIn=true can access this page
+ * - Staff users (staffLoggedIn=true) are BLOCKED from this page
+ * - Guest account data (email, password, phone, CC, etc.) is ADMIN ONLY
+ * - Staff cannot view or export guest account information
+ * - All sensitive data displays are protected with security checks
+ */
+
 import { db } from "./firebase.js";
 import {
   collection,
@@ -22,12 +33,25 @@ let currentFilterHistoricoReservas = "todas";
 
 document.addEventListener("DOMContentLoaded", async () => {
 
-  // Verificar se está logado como admin
+  // Verificar se está logado como admin (NÃO é suficiente estar logado como staff)
   const adminLoggedIn = localStorage.getItem("adminLoggedIn");
+  const staffLoggedIn = localStorage.getItem("staffLoggedIn");
+  
+  // IMPORTANTE: Staff NÃO pode aceder ao painel de admin
   if (!adminLoggedIn) {
-    alert("Acesso negado. Por favor faça login como Admin.");
-    window.location.href = "home.html";
+    alert("Acesso negado. Esta página é exclusiva para administradores.");
+    window.location.href = "index.html";
     return;
+  }
+
+  // Se staff ainda conseguir chegar aqui, bloqueia o acesso a dados sensíveis
+  const isAdmin = adminLoggedIn === "true";
+  const isStaff = staffLoggedIn === "true";
+  
+  // Ocultar seção de contas se não for apenas admin
+  if (!isAdmin && isStaff) {
+    const historicoContasSection = document.querySelector('[id*="historicoConta"]')?.closest('.card');
+    if (historicoContasSection) historicoContasSection.style.display = 'none';
   }
 
   // Adicionar botão de logout na navbar
@@ -220,10 +244,13 @@ document.addEventListener("DOMContentLoaded", async () => {
       } catch (e) { saida = String(res.data_saida); }
 
       const status = res.status || 'ativa';
+      
+      // Mask CC number for security
+      const ccMasked = res.cc ? res.cc.substring(0, 2) + " **** **** " + res.cc.substring(res.cc.length - 2) : '-';
 
       html += `<tr>
         <td class="cell-name">${res.nome_hospede || '-'}</td>
-        <td class="cell-cc">${res.cc || '-'}</td>
+        <td class="cell-cc">${ccMasked}</td>
         <td><span class="cell-room"><i class="fas fa-door-open"></i> ${res.room_id || '-'}</span></td>
         <td class="cell-date">${entrada}</td>
         <td class="cell-date">${saida}</td>
@@ -264,12 +291,54 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
+  // === AUTO-UPDATE RESERVATION STATUS BASED ON CHECKOUT DATE ===
+  async function verificarAndAtualizarStatusReservas() {
+    try {
+      const hoje = new Date();
+      hoje.setHours(0, 0, 0, 0);
+
+      const reservasSnapshot = await getDocs(collection(db, "reservas"));
+      reservasSnapshot.forEach(async (docRef) => {
+        const res = docRef.data();
+        
+        // Only process active reservations
+        if (res.status !== 'ativa') return;
+
+        let dataSaida;
+        try {
+          dataSaida = res.data_saida && typeof res.data_saida.toDate === 'function'
+            ? res.data_saida.toDate()
+            : new Date(res.data_saida);
+        } catch (e) {
+          return;
+        }
+
+        // If checkout date has passed, mark as completed
+        if (dataSaida < hoje) {
+          try {
+            await updateDoc(doc(db, "reservas", docRef.id), { 
+              status: "finalizada",
+              auto_updated: true,
+              auto_updated_at: new Date()
+            });
+            console.log(`Reserva ${docRef.id} automatically marked as completed`);
+          } catch (err) {
+            console.error(`Erro ao atualizar reserva ${docRef.id}:`, err);
+          }
+        }
+      });
+    } catch (err) {
+      console.error("Erro ao verificar status das reservas:", err);
+    }
+  }
+
   // === CARREGAR TUDO ===
   async function carregarTudo() {
     await carregarEstatisticas();
     await carregarQuartos();
     await carregarReservas();
     await processarBloqueiosExpirados();
+    await verificarAndAtualizarStatusReservas(); // Auto-update status based on checkout date
     await carregarBloqueios();
     await carregarHistoricoBloqueios();
     await carregarHistoricoReservas();
@@ -446,8 +515,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     exportDataTXT(rows, headers, "historico_estadias_goldenbeach.txt");
   });
 
-  // Export guest accounts
+  // Export guest accounts - ADMIN ONLY
   function getHistoricoContasExportData() {
+    // SECURITY CHECK: Only admins can export guest accounts
+    const isAdminUser = localStorage.getItem("adminLoggedIn") === "true";
+    if (!isAdminUser) {
+      alert("Acesso negado. Apenas administradores podem exportar dados de contas.");
+      return { headers: [], rows: [] };
+    }
+
     const headers = ["Nome", "Email", "Telefone", "CC", "Nacionalidade", "Data Criação", "Status"];
     const rows = allHistoricoContas.map(c => [
       (c.firstName || "") + " " + (c.lastName || ""),
@@ -463,11 +539,15 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   document.getElementById("exportHistoricoContasCSV")?.addEventListener("click", () => {
     const { headers, rows } = getHistoricoContasExportData();
-    exportDataCSV(rows, headers, "contas_criadas_goldenbeach.csv");
+    if (headers.length > 0) {
+      exportDataCSV(rows, headers, "contas_criadas_goldenbeach.csv");
+    }
   });
   document.getElementById("exportHistoricoContasTXT")?.addEventListener("click", () => {
     const { headers, rows } = getHistoricoContasExportData();
-    exportDataTXT(rows, headers, "contas_criadas_goldenbeach.txt");
+    if (headers.length > 0) {
+      exportDataTXT(rows, headers, "contas_criadas_goldenbeach.txt");
+    }
   });
 
   // === ROOM LIST FOR BLOCKING ===
@@ -728,7 +808,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             <strong>Check-in:</strong> ${toDateStr(r.data_entrada)} | <strong>Check-out:</strong> ${toDateStr(r.data_saida)} | <strong>Quarto:</strong> ${r.room_id || "-"}
           </div>
           <div style="font-size:0.78rem;color:var(--text-light);margin-top:2px;">
-            <strong>Email:</strong> ${r.email || "-"} | <strong>Telefone:</strong> ${r.telefone || "-"}
+            <strong>Email:</strong> ${r.email ? r.email.substring(0, 3) + "***@***" : "-"} | <strong>Telefone:</strong> ${r.telefone || "-"}
           </div>
           <div style="font-size:0.78rem;color:var(--text-light);margin-top:2px;">
             <strong>Total:</strong> ${r.total_pago ? r.total_pago + "€" : "-"} | <strong>Pagamento:</strong> ${r.pagamento || "-"}
@@ -805,11 +885,19 @@ document.addEventListener("DOMContentLoaded", async () => {
     container.innerHTML = html;
   }
 
-  // === LOAD GUEST ACCOUNTS HISTORY ===
+  // === LOAD GUEST ACCOUNTS HISTORY - ADMIN ONLY ===
   async function carregarHistoricoContas() {
     const container = document.getElementById("historicoContasContainer");
     const badge = document.getElementById("historicoContasCount");
     if (!container) return;
+
+    // SECURITY CHECK: Only admins can view guest accounts
+    const isAdminUser = localStorage.getItem("adminLoggedIn") === "true";
+    if (!isAdminUser) {
+      console.error("Acesso negado: Apenas administradores podem ver contas de clientes");
+      container.innerHTML = '<p style="color:red;font-size:0.85rem;">Acesso negado. Esta informação é exclusiva para administradores.</p>';
+      return;
+    }
 
     try {
       const snapshot = await getDocs(collection(db, "guests"));
@@ -831,6 +919,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   function renderHistoricoContas() {
     const container = document.getElementById("historicoContasContainer");
+    
+    // SECURITY CHECK: Only admins can render guest accounts
+    const isAdminUser = localStorage.getItem("adminLoggedIn") === "true";
+    if (!isAdminUser) {
+      container.innerHTML = '<p style="color:red;font-size:0.85rem;">Acesso negado. Esta informação é exclusiva para administradores.</p>';
+      return;
+    }
+
     const searchTerm = document.getElementById("searchHistoricoContas")?.value?.toLowerCase() || "";
 
     let filtered = allHistoricoContas.filter(c => {
@@ -854,10 +950,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       html += `<div style="padding:12px 16px;background:rgba(155,89,182,0.06);border:1px solid rgba(155,89,182,0.15);border-radius:10px;">
         <div style="font-weight:700;font-size:0.88rem;color:var(--primary-dark);">${c.firstName || ""} ${c.lastName || ""} ${statusBadge}</div>
         <div style="font-size:0.78rem;color:var(--text-light);margin-top:4px;">
-          <strong>Email:</strong> ${c.email || "-"} | <strong>Telefone:</strong> ${c.phone || "-"}
+          <strong>Email:</strong> ${c.email ? c.email.substring(0, 3) + "***@***" : "-"} | <strong>Telefone:</strong> ${c.phone || "-"}
         </div>
         <div style="font-size:0.78rem;color:var(--text-light);margin-top:2px;">
-          <strong>CC:</strong> ${c.cc || "-"} | <strong>Nacionalidade:</strong> ${c.nationality || "-"}
+          <strong>CC:</strong> ${c.cc ? c.cc.substring(0, 2) + " **** **** " + c.cc.substring(c.cc.length - 2) : "-"} | <strong>Nacionalidade:</strong> ${c.nationality || "-"}
         </div>
         <div style="font-size:0.75rem;color:var(--text-light);margin-top:2px;">
           Criada em: ${c.createdAt ? toDateStr(c.createdAt) : "-"}

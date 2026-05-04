@@ -2,16 +2,15 @@
 <html lang="pt-PT">
 <head>
   <meta charset="UTF-8">
-  <title>Golden Beach Guest House | Admin Login</title>
+  <title>Golden Beach Guest House | Login Utilizador</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  
-<link rel="stylesheet" href="css/responsive.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/responsive.css">
   <link rel="stylesheet" href="css/login-admin.css">
-  </head>
+</head>
 <body>
-
-  <!-- 🎥 Vídeos de fundo -->
+  <!-- Videos de fundo -->
   <video class="bg-video active" autoplay muted loop>
     <source src="video/Hotel_vid1.mp4" type="video/mp4">
   </video>
@@ -24,14 +23,14 @@
     <source src="video/Hotel_vid3.mp4" type="video/mp4">
   </video>
 
-  <!-- 🧊 Conteúdo -->
+  <!-- Conteúdo -->
   <div class="overlay">
     <div class="card">
       <div class="card-header">
         <a href="index.html">
           <img src="img/logo.png" alt="Logo">
         </a>
-        <h1>Admin Login</h1>
+        <h1>Minha Conta</h1>
         <p>Golden Beach Guest House</p>
       </div>
 
@@ -40,7 +39,7 @@
 
       <form id="loginForm">
         <label>Email</label>
-        <input type="email" id="email" required placeholder="admin@example.com">
+        <input type="email" id="email" required placeholder="seu.email@example.com">
 
         <label>Palavra-passe</label>
         <input type="password" id="password" required placeholder="••••••••">
@@ -101,29 +100,30 @@
           passwordInput.value
         );
 
-        successMsg.textContent = "✅ Login realizado com sucesso!";
+        // Successful login
+        successMsg.textContent = "Login bem-sucedido! Redirecionando...";
         successMsg.style.display = "block";
 
-        // Guardar token e redirecionar
-        setTimeout(() => {
-          localStorage.setItem("adminLoggedIn", "true");
-          localStorage.setItem("userEmail", userCredential.user.email);
-          window.location.href = "admin.html";
-        }, 1500);
+        localStorage.setItem("userEmail", userCredential.user.email);
 
+        setTimeout(() => {
+          window.location.href = "client.html";
+        }, 1500);
       } catch (error) {
-        let mensagem = "❌ Erro ao fazer login";
+        errorMsg.style.display = "block";
 
         if (error.code === "auth/user-not-found") {
-          mensagem = "❌ Utilizador não encontrado";
+          errorMsg.textContent = "Utilizador não encontrado. Verifique o email.";
         } else if (error.code === "auth/wrong-password") {
-          mensagem = "❌ Palavra-passe incorreta";
+          errorMsg.textContent = "Palavra-passe incorreta. Tente novamente.";
         } else if (error.code === "auth/invalid-email") {
-          mensagem = "❌ Email inválido";
+          errorMsg.textContent = "Email inválido. Tente novamente.";
+        } else if (error.code === "auth/user-disabled") {
+          errorMsg.textContent = "Esta conta foi desativada.";
+        } else {
+          errorMsg.textContent = error.message || "Erro ao fazer login. Tente novamente.";
         }
 
-        errorMsg.textContent = mensagem;
-        errorMsg.style.display = "block";
         loading.style.display = "none";
         loginBtn.disabled = false;
       }
@@ -131,7 +131,3 @@
   </script>
 </body>
 </html>
-
-
-
-

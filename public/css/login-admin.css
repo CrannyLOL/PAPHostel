@@ -53,8 +53,19 @@
       margin-bottom: 30px;
     }
 
+    .card-header a {
+      display: inline-block;
+      cursor: pointer;
+      transition: opacity 0.3s ease;
+      text-decoration: none;
+    }
+
+    .card-header a:hover {
+      opacity: 0.8;
+    }
+
     .card-header img {
-      max-width: 180px;
+      max-width: 200px;
       height: auto;
       margin-bottom: 15px;
     }

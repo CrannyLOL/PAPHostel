@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8">
+  <title>Golden Beach Guest House | Minha Conta</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <link rel="stylesheet" href="css/client.css">
+</head>
+<body>
+  <!-- Navbar -->
+  <div class="navbar">
+    <div class="navbar-left">
+      <a href="index.html" style="display: flex; align-items: center;">
+        <img src="img/logo.png" alt="Logo" class="navbar-logo">
+      </a>
+    </div>
+    <div class="navbar-right">
+      <div class="language-selector">
+        <div class="language-buttons">
+          <button class="language-toggle" id="langBtnPt" title="Português">
+            <img src="img/Pt.png" alt="Português">
+          </button>
+          <button class="language-toggle" id="langBtnEn" title="English">
+            <img src="img/Uk.png" alt="English">
+          </button>
+        </div>
+      </div>
+      <button class="btn-logout" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Sair</button>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="overlay">
+    <div class="page-wrapper">
+      <!-- Header -->
+      <div class="page-header">
+        <div class="page-header-left">
+          <h1><i class="fas fa-user-circle" style="color: var(--accent-blue); font-size: 1.3rem;"></i> Minha Conta</h1>
+          <p id="welcomeMsg">Bem-vindo à sua página de cliente</p>
+        </div>
+      </div>
+
+      <!-- Account Info Card -->
+      <div class="card">
+        <div class="card-header">
+          <h2><i class="fas fa-user"></i> Informações Pessoais</h2>
+        </div>
+        <div class="card-body">
+          <div class="info-grid">
+            <div class="info-item">
+              <label>Nome Completo</label>
+              <div class="info-value" id="fullName">-</div>
+            </div>
+            <div class="info-item">
+              <label>Email</label>
+              <div class="info-value" id="emailDisplay">-</div>
+            </div>
+            <div class="info-item">
+              <label>Telefone</label>
+              <div class="info-value" id="phone">-</div>
+            </div>
+            <div class="info-item">
+              <label>Nacionalidade</label>
+              <div class="info-value" id="nationality">-</div>
+            </div>
+            <div class="info-item">
+              <label>Número de Identificação (CC)</label>
+              <div class="info-value" id="ccDisplay">**** **** ****</div>
+            </div>
+            <div class="info-item">
+              <label>Data de Criação da Conta</label>
+              <div class="info-value" id="createdAtDisplay">-</div>
+            </div>
+          </div>
+          <div class="card-actions">
+            <button class="btn btn-primary" id="editProfileBtn"><i class="fas fa-edit"></i> Editar Perfil</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reservations Card -->
+      <div class="card">
+        <div class="card-header">
+          <h2><i class="fas fa-calendar-check"></i> Minhas Reservas</h2>
+          <span class="badge" id="reservasCount">0 reservas</span>
+        </div>
+        <div class="card-body">
+          <div id="reservasContainer" class="loading"><i class="fas fa-circle-notch"></i> Carregando reservas...</div>
+        </div>
+      </div>
+
+      <!-- Previous Stays Card -->
+      <div class="card">
+        <div class="card-header">
+          <h2><i class="fas fa-history"></i> Histórico de Estadias</h2>
+          <span class="badge" id="stadiastCount">0 estadias</span>
+        </div>
+        <div class="card-body">
+          <div id="stadiasContainer" class="loading"><i class="fas fa-circle-notch"></i> Carregando estadias...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="js/client.js"></script>
+</body>
+</html>

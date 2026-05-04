@@ -28,13 +28,22 @@
     .navbar {
       position: fixed; top: 0; left: 0; right: 0;
       background: rgba(44,62,80,0.97);
-      padding: 12px 40px; z-index: 1000;
+      padding: 8px 40px; z-index: 1000;
       display: flex; justify-content: space-between; align-items: center;
       backdrop-filter: blur(15px);
       box-shadow: 0 2px 20px rgba(0,0,0,0.15);
     }
     .navbar-left { display: flex; align-items: center; gap: 16px; }
-    .navbar-logo { max-width: 120px; height: auto; }
+    .navbar-logo { max-width: 90px; height: auto; max-height: 45px; object-fit: contain; }
+
+    .navbar-left a {
+      cursor: pointer;
+      transition: opacity 0.3s ease;
+    }
+
+    .navbar-left a:hover {
+      opacity: 0.8;
+    }
     .navbar h1 { display: none; }
     .navbar-links { display: flex; gap: 10px; align-items: center; }
     .navbar a {
@@ -257,8 +266,8 @@
       .stats { grid-template-columns: repeat(2, 1fr); }
     }
     @media (max-width: 768px) {
-      .navbar { padding: 10px 16px; }
-      .navbar-logo { max-width: 80px; }
+      .navbar { padding: 8px 16px; }
+      .navbar-logo { max-width: 70px; max-height: 35px; }
       .page-wrapper { padding: 80px 14px 30px; }
       .stats { grid-template-columns: 1fr 1fr; gap: 10px; }
       .stat-card { padding: 16px 14px; }
