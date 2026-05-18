@@ -58,9 +58,9 @@
     }
 
     .navbar-logo {
-      max-width: 110px;
+      max-width: 145px;
       height: auto;
-      max-height: 68px;
+      max-height: 200px;
       object-fit: contain;
     }
 
