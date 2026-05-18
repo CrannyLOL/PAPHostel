@@ -38,3 +38,4 @@ serviceAccountKey.json
 
 # Backup files
 *.backup
+.vercel
