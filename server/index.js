@@ -24,8 +24,10 @@ const __dirname = path.dirname(__filename);
 app.use(express.static(path.join(__dirname, "../public")));
 
 // Email Mode (real ou log)
-const EMAIL_MODE = process.env.EMAIL_MODE || "log";
 const SMTP_CONFIGURED = !!(process.env.SMTP_USER && process.env.SMTP_PASS);
+const EMAIL_MODE = process.env.EMAIL_MODE || (SMTP_CONFIGURED ? "real" : "log");
+const SMTP_PORT = parseInt(process.env.SMTP_PORT || "587", 10);
+const SMTP_SECURE = process.env.SMTP_SECURE === "true" || SMTP_PORT === 465;
 
 // Configurar transportador de email
 let transporter = null;
@@ -34,7 +36,7 @@ console.log("=== CONFIGURAÇÃO EMAIL ===");
 console.log(`EMAIL_MODE: ${EMAIL_MODE}`);
 console.log(`SMTP_CONFIGURED: ${SMTP_CONFIGURED}`);
 console.log(`SMTP_HOST: ${process.env.SMTP_HOST || "smtp.gmail.com"}`);
-console.log(`SMTP_PORT: ${process.env.SMTP_PORT || "587"}`);
+console.log(`SMTP_PORT: ${SMTP_PORT}`);
 console.log(`SMTP_USER: ${process.env.SMTP_USER ? "✓ Configurado" : "✗ Não definido"}`);
 console.log(`SMTP_PASS: ${process.env.SMTP_PASS ? "✓ Configurado" : "✗ Não definido"}`);
 console.log(`SMTP_FROM: ${process.env.SMTP_FROM || "goldenbeach@hotel.com"}`);
@@ -43,11 +45,18 @@ console.log("========================\n");
 if (EMAIL_MODE === "real" && SMTP_CONFIGURED) {
   transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST || "smtp.gmail.com",
-    port: parseInt(process.env.SMTP_PORT || "587"),
-    secure: false,
+    port: SMTP_PORT,
+    secure: SMTP_SECURE,
+    requireTLS: !SMTP_SECURE,
+    connectionTimeout: 15000,
+    greetingTimeout: 10000,
+    socketTimeout: 20000,
     auth: {
       user: process.env.SMTP_USER,
       pass: process.env.SMTP_PASS
+    },
+    tls: {
+      rejectUnauthorized: false
     },
     logger: true,
     debug: true
@@ -64,14 +73,29 @@ if (EMAIL_MODE === "real" && SMTP_CONFIGURED) {
   
   console.log("✓ Email: Modo REAL - Emails serão enviados");
 } else {
-  // Modo simulado com Nodemailer (não envia realmente, apenas escreve logs)
-  transporter = nodemailer.createTransport({
-    host: "localhost",
-    port: 1025,
-    secure: false,
-    auth: false
-  });
-  console.log(`⚠ Email: Modo ${EMAIL_MODE} - Emails serão apenas registados em logs`);
+  if (process.env.VERCEL === "1") {
+    transporter = null;
+    console.warn("⚠ Email: Vercel sem SMTP configurado. Os emails não serão enviados até definir EMAIL_MODE=real e as credenciais SMTP no painel da Vercel.");
+  } else {
+    transporter = {
+      async sendMail(mailOptions) {
+        console.log(`⚠ Email: Modo ${EMAIL_MODE} - simulação local de envio para ${mailOptions.to}`);
+        return {
+          messageId: `mock-${Date.now()}`,
+          response: "Local mock transport"
+        };
+      }
+    };
+    console.log(`⚠ Email: Modo ${EMAIL_MODE} - Emails serão apenas registados em logs`);
+  }
+}
+
+function ensureEmailTransporter() {
+  if (!transporter) {
+    throw new Error("Email não configurado. Defina EMAIL_MODE=real e as credenciais SMTP no ambiente de deploy.");
+  }
+
+  return transporter;
 }
 
 // ============================================
@@ -114,7 +138,7 @@ app.post("/api/test-email", async (req, res) => {
     };
 
     // Enviar email de teste
-    await transporter.sendMail(mailOptions);
+    await ensureEmailTransporter().sendMail(mailOptions);
     
     console.log(`[EMAIL TESTE] Enviado para: ${email}`);
 
@@ -406,7 +430,7 @@ app.post("/api/send-invoice", async (req, res) => {
     };
 
     // Enviar email
-    const info = await transporter.sendMail(mailOptions);
+    const info = await ensureEmailTransporter().sendMail(mailOptions);
     console.log(`✓ [EMAIL FATURA] Enviado para: ${to} (Idioma: ${language})`);
     console.log(`  Response: ${info.response || JSON.stringify(info).substring(0, 100)}`);
 
@@ -472,7 +496,7 @@ app.post("/api/send-ttlock-code", async (req, res) => {
 
     // Enviar email
     try {
-      const info = await transporter.sendMail(mailOptions);
+      const info = await ensureEmailTransporter().sendMail(mailOptions);
       console.log(`[EMAIL CODIGO] Enviado para: ${email} (Idioma: ${language})`);
       console.log(`  Código: ${code}`);
       console.log(`  Response ID: ${info.response || "Demo Mode"}`);
@@ -590,7 +614,7 @@ app.post("/api/test-email", async (req, res) => {
 
     // Enviar email
     try {
-      const info = await transporter.sendMail(mailOptions);
+      const info = await ensureEmailTransporter().sendMail(mailOptions);
       console.log(`[EMAIL FATURA] Enviado para: ${to} (Idioma: ${language})`);
       console.log(`  Response ID: ${info.response || "Demo Mode"}`);
     } catch (emailError) {
@@ -660,7 +684,7 @@ app.post("/api/send-ttlock-code", async (req, res) => {
 
     // Enviar email
     try {
-      const info = await transporter.sendMail(mailOptions);
+      const info = await ensureEmailTransporter().sendMail(mailOptions);
       console.log(`[EMAIL CODIGO] Enviado para: ${email} (Idioma: ${language})`);
       console.log(`  Código: ${code}`);
       console.log(`  Response ID: ${info.response || "Demo Mode"}`);
@@ -732,7 +756,7 @@ app.post("/api/test-email", async (req, res) => {
 
     console.log(`[TEST EMAIL] Iniciando teste para: ${testEmail}`);
 
-    const info = await transporter.sendMail({
+    const info = await ensureEmailTransporter().sendMail({
       from: process.env.SMTP_FROM || process.env.SMTP_USER || "test@goldenbeach.com",
       to: testEmail,
       subject: "Teste de Email - PAP Hostel App",

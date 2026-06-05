@@ -72,6 +72,7 @@ FIREBASE_ADMIN_SDK_KEY=seu_valor
 EMAIL_MODE=real
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
+SMTP_SECURE=false
 SMTP_USER=seu-email@gmail.com
 SMTP_PASS=sua-senha-app-google
 SMTP_FROM=Golden Beach Guest House <seu-email@gmail.com>
@@ -92,6 +93,7 @@ NODE_ENV=production
 1. Ative [Autenticação de Dois Fatores](https://myaccount.google.com/security) no Gmail
 2. Gere [App Password](https://myaccount.google.com/apppasswords) (Select "Mail" e "Windows Computer")
 3. Copie a senha de 16 caracteres para `SMTP_PASS`
+4. Garanta que estas variáveis estão definidas no painel da Vercel antes do deploy, porque o ambiente de produção não usa o `.env` local
 
 ### 3.3 Root Directory
 Deixe vazio (Vercel detectará automaticamente)
