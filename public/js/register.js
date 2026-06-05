@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", () => {
     messageDiv.textContent = "";
 
     const firstName = document.getElementById("firstName").value.trim();
-    const lastName = document.getElementById("lastName").value.trim();
+    const apelido = document.getElementById("lastName").value.trim();
     const email = document.getElementById("email").value.trim();
     const phone = document.getElementById("phone").value.trim();
     const cc = document.getElementById("cc").value.trim();
@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Validações básicas
     const lang = localStorage.getItem("language") || "pt";
-    if (!firstName || !lastName || !email || !cc || !password || !confirmPassword) {
+    if (!firstName || !apelido || !email || !cc || !password || !confirmPassword) {
       showMessage(lang === "pt" ? "Por favor, preencha todos os campos obrigatórios." : "Please fill in all required fields.", "error");
       return;
     }
@@ -96,7 +96,8 @@ document.addEventListener("DOMContentLoaded", () => {
       // Adicionar dados do utilizador à coleção de guests
       await addDoc(collection(db, "guests"), {
         firstName: firstName,
-        lastName: lastName,
+        lastName: apelido,
+        apelido: apelido,
         email: email,
         phone: phone,
         cc: cc,

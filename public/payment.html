@@ -220,7 +220,7 @@
     document.getElementById("payCheckin").textContent = `${entradaDate.toLocaleDateString('pt-PT', opts)} ${booking.hora_checkin}`;
     document.getElementById("payCheckout").textContent = `${saidaDate.toLocaleDateString('pt-PT', opts)} ${booking.hora_checkout}`;
     document.getElementById("payNights").textContent = booking.nights;
-    document.getElementById("payGuest").textContent = booking.firstName + " " + booking.lastName;
+    document.getElementById("payGuest").textContent = booking.firstName + " " + (booking.apelido || booking.lastName);
     document.getElementById("payRoomPrice").textContent = booking.roomPrice.toFixed(2) + "€";
     document.getElementById("payExtras").textContent = booking.extrasTotal.toFixed(2) + "€";
     document.getElementById("payTotal").textContent = booking.total.toFixed(2) + "€";
@@ -259,9 +259,10 @@
       }
 
       const dadosReserva = {
-        nome_hospede: booking.firstName + " " + booking.lastName,
+        nome_hospede: booking.firstName + " " + (booking.apelido || booking.lastName),
         primeiro_nome: booking.firstName,
-        ultimo_nome: booking.lastName,
+        ultimo_nome: booking.apelido || booking.lastName,
+        apelido: booking.apelido || booking.lastName,
         cc: booking.cc,
         email: booking.email,
         telefone: booking.phone,
@@ -358,7 +359,7 @@
       pdf.setFontSize(9);
       pdf.setFont("helvetica", "normal");
       pdf.setTextColor(80, 80, 80);
-      pdf.text(`Nome: ${booking.firstName + " " + booking.lastName}`, margin, y); y += 6;
+      pdf.text(`Nome: ${booking.firstName + " " + (booking.apelido || booking.lastName)}`, margin, y); y += 6;
       pdf.text(`CC/Passaporte: ${booking.cc}`, margin, y); y += 6;
       pdf.text(`Email: ${booking.email}`, margin, y); y += 6;
       pdf.text(`Telefone: ${booking.phone}`, margin, y); y += 12;
@@ -479,7 +480,7 @@
           body: JSON.stringify({
             to: booking.email,
             subject: lang === "pt" ? `Golden Beach Guest House - Fatura Reserva` : `Golden Beach Guest House - Booking Invoice`,
-            guestName: booking.firstName + " " + booking.lastName,
+            guestName: booking.firstName + " " + (booking.apelido || booking.lastName),
             pdfBase64: pdfBase64,
             language: lang === "pt" ? "pt" : "en",
             bookingData: booking
@@ -504,7 +505,7 @@
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             email: booking.email,
-            guestName: booking.firstName + " " + booking.lastName,
+            guestName: booking.firstName + " " + (booking.apelido || booking.lastName),
             code: codigoTTLock,
             roomId: booking.quarto,
             checkInDate: entradaDate.toLocaleDateString(lang === "pt" ? "pt-PT" : "en-US"),

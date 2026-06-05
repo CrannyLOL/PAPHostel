@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         </div>
         <div class="summary-item">
           <span>${lang === "pt" ? "Hóspede:" : "Guest:"}</span>
-          <strong>${bookingData.firstName} ${bookingData.lastName}</strong>
+          <strong>${bookingData.firstName} ${bookingData.apelido || bookingData.lastName}</strong>
         </div>
         <div class="summary-item">
           <span>${lang === "pt" ? "Data de Entrada:" : "Check-in:"}</span>
@@ -141,9 +141,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         // Criar documento de reserva no Firebase
         const reservaDoc = await addDoc(collection(db, "reservas"), {
-          nome_hospede: bookingData.firstName + " " + bookingData.lastName,
+          nome_hospede: bookingData.firstName + " " + (bookingData.apelido || bookingData.lastName),
           primeiro_nome: bookingData.firstName,
-          ultimo_nome: bookingData.lastName,
+          ultimo_nome: bookingData.apelido || bookingData.lastName,
+          apelido: bookingData.apelido || bookingData.lastName,
           email: bookingData.email,
           cc: bookingData.cc,
           phone: bookingData.phone,

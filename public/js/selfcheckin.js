@@ -21,11 +21,12 @@ export function setupSelfCheckin() {
     e.preventDefault();
 
     const nome = form.nome.value.trim();
+    const apelido = form.apelido.value.trim();
     const cc = form.cc.value.trim();
     const lang = localStorage.getItem("language") || "pt";
 
-    if (!nome || !cc) {
-      const msg = lang === "pt" ? "Preencha todos os campos!" : "Fill in all fields!";
+    if (!nome || !apelido || !cc) {
+      const msg = lang === "pt" ? "Preencha nome, apelido e cartão de cidadão!" : "Fill in name, last name and ID card!";
       alert(msg);
       return;
     }
@@ -34,7 +35,7 @@ export function setupSelfCheckin() {
       // 🔍 Procurar TODAS as reservas com essas credenciais
       const q = query(
         collection(db, "reservas"),
-        where("nome_hospede", "==", nome),
+        where("nome_hospede", "==", `${nome} ${apelido}`),
         where("cc", "==", cc),
         where("status", "==", "ativa")
       );
@@ -43,8 +44,8 @@ export function setupSelfCheckin() {
 
       if (snapshot.empty) {
         const msg = lang === "pt"
-          ? "Credenciais erradas ou nenhuma reserva ativa encontrada!"
-          : "Wrong credentials or no active booking found!";
+          ? "Credenciais erradas ou nenhuma reserva ativa encontrada! Verifique nome, apelido e cartão de cidadão."
+          : "Wrong credentials or no active booking found! Please verify name, last name and ID card.";
         alert(msg);
         form.reset();
         document.getElementById("multiReservasContainer").style.display = "none";

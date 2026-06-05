@@ -47,7 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const saida = document.getElementById("saida").value;
     const quarto = document.getElementById("quarto").value;
     const firstName = document.getElementById("firstName").value.trim();
-    const lastName = document.getElementById("lastName").value.trim();
+    const apelido = document.getElementById("lastName").value.trim();
     const password = document.getElementById("bookingPassword").value;
     const email = document.getElementById("email").value.trim();
     const cc = document.getElementById("cc").value.trim();
@@ -80,10 +80,10 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    if (!firstName || !lastName || !password || !email || !cc || !phone) {
+    if (!firstName || !apelido || !password || !email || !cc || !phone) {
       const lang = localStorage.getItem("language") || "pt";
       alert(lang === "pt"
-        ? "Por favor preencha todos os campos obrigatórios!"
+        ? "Por favor preencha nome, apelido, email, cartão de cidadão, telefone e palavra-passe!"
         : "Please fill in all required fields!");
       return;
     }
@@ -94,7 +94,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const guestQuery = query(
         collection(db, "guests"),
         where("firstName", "==", firstName),
-        where("lastName", "==", lastName),
+        where("lastName", "==", apelido),
         where("cc", "==", cc),
         where("email", "==", email)
       );
@@ -103,7 +103,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (guestSnapshot.empty) {
         alert(lang === "pt"
-          ? "Credenciais erradas ou conta não encontrada! Verifique o Nome, Sobrenome, Email e Cartão de Cidadão."
+          ? "Credenciais erradas ou conta não encontrada! Verifique o Nome, Apelido, Email e Cartão de Cidadão."
           : "Wrong credentials or account not found! Please verify your First Name, Last Name, Email, and ID Card.");
         return;
       }
@@ -148,7 +148,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // Store booking data in sessionStorage for payment page
     const bookingData = {
       firstName: firstName,
-      lastName: lastName,
+      lastName: apelido,
+      apelido: apelido,
       email: email,
       cc: cc,
       phone: phone,
