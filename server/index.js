@@ -894,17 +894,22 @@ function gerarTemplateTTLock(dados) {
 // ============================================
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`
-    ========================================
-    PAP Hostel App - Servidor Iniciado
-    ========================================
-    Porta: ${PORT}
-    Ambiente: ${process.env.NODE_ENV || "development"}
-    Email Mode: ${EMAIL_MODE}
-    SMTP Configurado: ${SMTP_CONFIGURED ? "SIM" : "NAO"}
-    TTLock: ${process.env.TTLOCK_MODE || "simulado"}
-    URL: http://localhost:${PORT}
-    ========================================
-  `);
-});
+
+if (process.env.VERCEL !== "1") {
+  app.listen(PORT, () => {
+    console.log(`
+      ========================================
+      PAP Hostel App - Servidor Iniciado
+      ========================================
+      Porta: ${PORT}
+      Ambiente: ${process.env.NODE_ENV || "development"}
+      Email Mode: ${EMAIL_MODE}
+      SMTP Configurado: ${SMTP_CONFIGURED ? "SIM" : "NAO"}
+      TTLock: ${process.env.TTLOCK_MODE || "simulado"}
+      URL: http://localhost:${PORT}
+      ========================================
+    `);
+  });
+}
+
+export default app;
