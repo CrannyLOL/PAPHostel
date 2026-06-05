@@ -7,6 +7,7 @@ import nodemailer from "nodemailer";
 import PDFDocument from "pdfkit";
 import { Readable } from "stream";
 import { criarCodigoTTLock, obterTokenTTLock } from "./ttlock.js";
+import { validarPinTTLock } from "./pin-utils.js";
 
 // Configurações base
 dotenv.config();
@@ -446,6 +447,13 @@ app.post("/api/send-ttlock-code", async (req, res) => {
       });
     }
 
+    if (!validarPinTTLock(code)) {
+      return res.status(400).json({
+        erro: true,
+        mensagem: "O PIN TTLock tem de ter exatamente 6 dígitos entre 1 e 7"
+      });
+    }
+
     const mailOptions = {
       from: process.env.SMTP_FROM || process.env.SMTP_USER || "goldenbeach@hotel.com",
       to: email,
@@ -624,6 +632,13 @@ app.post("/api/send-ttlock-code", async (req, res) => {
       return res.status(400).json({
         erro: true,
         mensagem: "Email e código são obrigatórios"
+      });
+    }
+
+    if (!validarPinTTLock(code)) {
+      return res.status(400).json({
+        erro: true,
+        mensagem: "O PIN TTLock tem de ter exatamente 6 dígitos entre 1 e 7"
       });
     }
 

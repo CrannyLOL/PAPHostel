@@ -1,5 +1,6 @@
 import { db } from "./firebase.js";
 import { translatePage, setupLanguageToggle, t } from "./translations.js";
+import { validarIntervaloReserva } from "./pin-utils.js";
 import {
   collection,
   getDocs,
@@ -72,11 +73,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const dataEntrada = new Date(entrada);
     const dataSaida = new Date(saida);
 
-    if (dataSaida <= dataEntrada) {
+    const validacaoDatas = validarIntervaloReserva(dataEntrada, dataSaida);
+    if (!validacaoDatas.ok) {
       const lang = localStorage.getItem("language") || "pt";
-      alert(lang === "pt"
-        ? "A data de saída tem de ser posterior à data de entrada!"
-        : "Check-out date must be after check-in date!");
+      alert(lang === "pt" ? validacaoDatas.mensagem : "Check-out date must be after check-in date!");
       return;
     }
 
@@ -152,6 +152,7 @@ document.addEventListener("DOMContentLoaded", () => {
       email: email,
       cc: cc,
       phone: phone,
+      room_id: quarto,
       quarto: quarto,
       entrada: entrada,
       saida: saida,

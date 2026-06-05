@@ -1,6 +1,7 @@
 import { db, auth } from "./firebase.js";
 import { translatePage, setupLanguageToggle, t } from "./translations.js";
 import { obterIdiomaDeNacionalidade } from "./language-map.js";
+import { gerarPinTTLock, validarIntervaloReserva, validarPinTTLock, calcularEstadoPin } from "./pin-utils.js";
 import {
   collection,
   addDoc,
@@ -116,14 +117,22 @@ document.addEventListener("DOMContentLoaded", async () => {
       };
 
       try {
+        const validacaoDatas = validarIntervaloReserva(bookingData.entrada, bookingData.saida);
+        if (!validacaoDatas.ok) {
+          throw new Error(validacaoDatas.mensagem);
+        }
+
         updateStatus(
           lang === "pt" ? "Processando pagamento..." : "Processing payment...",
           "loading"
         );
 
-        // Gerar código TTLOCK único
-        const codigoTTLock = gerarCodigoTTLock();
-        console.log("Código TTLock gerado:", codigoTTLock);
+        // Gerar PIN compatível com a fechadura instalada
+        const codigoTTLock = gerarPinTTLock();
+        if (!validarPinTTLock(codigoTTLock)) {
+          throw new Error("Falha ao gerar PIN compatível com a TTLock.");
+        }
+        console.log("PIN TTLock gerado:", codigoTTLock);
 
         updateStatus(
           lang === "pt" ? "Criando reserva..." : "Creating booking...",
@@ -133,12 +142,15 @@ document.addEventListener("DOMContentLoaded", async () => {
         // Criar documento de reserva no Firebase
         const reservaDoc = await addDoc(collection(db, "reservas"), {
           nome_hospede: bookingData.firstName + " " + bookingData.lastName,
+          primeiro_nome: bookingData.firstName,
+          ultimo_nome: bookingData.lastName,
           email: bookingData.email,
           cc: bookingData.cc,
           phone: bookingData.phone,
+          room_id: bookingData.quarto,
           quarto: bookingData.quarto,
-          data_entrada: new Date(bookingData.entrada),
-          data_saida: new Date(bookingData.saida),
+          data_entrada: validacaoDatas.entrada,
+          data_saida: validacaoDatas.saida,
           hora_checkin: bookingData.hora_checkin,
           hora_checkout: bookingData.hora_checkout,
           noites: bookingData.nights,
@@ -147,8 +159,15 @@ document.addEventListener("DOMContentLoaded", async () => {
           extras_total: bookingData.extrasTotal,
           total_reserva: bookingData.total,
           codigo_ttlk: codigoTTLock,
+          estado_pin: "pendente",
+          pin_origem: "gerado_localmente",
+          pin_regras: "1-7",
+          pin_criado_em: serverTimestamp(),
+          pin_ativo_em: null,
+          pin_expira_em: validacaoDatas.saida,
           status: "ativa",
           data_criacao: serverTimestamp(),
+          criado_em: serverTimestamp(),
           data_pagamento: new Date(),
           metodo_pagamento: document.getElementById("paymentMethod")?.value || "card"
         });
@@ -242,8 +261,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         // Sucesso
         updateStatus(
           lang === "pt" 
-            ? `✓ Reserva confirmada!\n\nCódigo de acesso: ${codigoTTLock}\n\n📧 Fatura e código TTLOCK foram enviados para seu email.` 
-            : `✓ Booking confirmed!\n\nAccess code: ${codigoTTLock}\n\n📧 Invoice and TTLOCK code have been sent to your email.`,
+            ? `✓ Reserva confirmada!\n\nPIN TTLock: ${codigoTTLock}\n\n📧 Fatura e PIN foram enviados para o seu email.` 
+            : `✓ Booking confirmed!\n\nTTLock PIN: ${codigoTTLock}\n\n📧 Invoice and PIN have been sent to your email.`,
           "success"
         );
 
@@ -275,8 +294,3 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 });
 
-// Função para gerar código TTLOCK
-function gerarCodigoTTLock() {
-  // Formato: XXXXXX (6 dígitos numéricos)
-  return Math.floor(100000 + Math.random() * 900000).toString();
-}

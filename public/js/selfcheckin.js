@@ -1,5 +1,6 @@
 import { db } from "./firebase.js";
 import { obterIdiomaDeNacionalidade } from "./language-map.js";
+import { gerarPinTTLock, validarPinTTLock, calcularEstadoPin } from "./pin-utils.js";
 import {
   collection,
   getDocs,
@@ -190,52 +191,55 @@ async function processarCheckin(reserva, lang) {
     dataSai = new Date();
   }
 
-  // Gerar código TTLock ÚNICO para este quarto
+  // Garantir que a reserva já tem um PIN compatível com a fechadura instalada
   let codigoTTLock = reserva.codigo_ttlk;
-  let emailNaoEnviado = false;
 
   if (!codigoTTLock) {
-    codigoTTLock = Math.floor(100000 + Math.random() * 900000).toString();
+    codigoTTLock = gerarPinTTLock();
+  }
 
-    try {
-      await updateDoc(doc(db, "reservas", reserva.id), {
-        codigo_ttlk: codigoTTLock,
-        status_checkin: "realizado",
-        data_checkin: new Date()
-      });
-      console.log(`[QUARTO ${reserva.quarto}] Código gerado: ${codigoTTLock}`);
-    } catch (err) {
-      console.error(`[QUARTO ${reserva.quarto}] Erro ao atualizar código:`, err);
+  if (!validarPinTTLock(codigoTTLock)) {
+    codigoTTLock = gerarPinTTLock();
+  }
+
+  try {
+    await updateDoc(doc(db, "reservas", reserva.id), {
+      codigo_ttlk: codigoTTLock,
+      estado_pin: calcularEstadoPin(dataEnt, dataSai, new Date()),
+      pin_ativo_em: new Date(),
+      status_checkin: "realizado",
+      data_checkin: new Date()
+    });
+    console.log(`[QUARTO ${reserva.quarto}] Código validado/guardado: ${codigoTTLock}`);
+  } catch (err) {
+    console.error(`[QUARTO ${reserva.quarto}] Erro ao atualizar código:`, err);
+  }
+
+  // Enviar código por email
+  try {
+    const idiomaCliente = obterIdiomaDeNacionalidade(reserva.nationality || "português");
+
+    const emailResponse = await fetch("/api/send-ttlock-code", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: reserva.email,
+        guestName: reserva.nome_hospede,
+        code: codigoTTLock,
+        roomId: reserva.quarto || reserva.room_id,
+        checkInDate: dataEnt.toLocaleDateString(idiomaCliente === "pt" ? "pt-PT" : "en-US"),
+        checkOutDate: dataSai.toLocaleDateString(idiomaCliente === "pt" ? "pt-PT" : "en-US"),
+        language: idiomaCliente
+      })
+    });
+
+    if (!emailResponse.ok) {
+      console.warn(`[QUARTO ${reserva.quarto}] Email pode não ter sido enviado`);
+    } else {
+      console.log(`[QUARTO ${reserva.quarto}] Email enviado com sucesso`);
     }
-
-    // Enviar código por email
-    try {
-      const idiomaCliente = obterIdiomaDeNacionalidade(reserva.nationality || "português");
-
-      const emailResponse = await fetch("/api/send-ttlock-code", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: reserva.email,
-          guestName: reserva.nome_hospede,
-          code: codigoTTLock,
-          roomId: reserva.quarto || reserva.room_id,
-          checkInDate: dataEnt.toLocaleDateString(idiomaCliente === "pt" ? "pt-PT" : "en-US"),
-          checkOutDate: dataSai.toLocaleDateString(idiomaCliente === "pt" ? "pt-PT" : "en-US"),
-          language: idiomaCliente
-        })
-      });
-
-      if (!emailResponse.ok) {
-        emailNaoEnviado = true;
-        console.warn(`[QUARTO ${reserva.quarto}] Email pode não ter sido enviado`);
-      } else {
-        console.log(`[QUARTO ${reserva.quarto}] Email enviado com sucesso`);
-      }
-    } catch (err) {
-      emailNaoEnviado = true;
-      console.warn(`[QUARTO ${reserva.quarto}] Erro ao enviar email:`, err.message);
-    }
+  } catch (err) {
+    console.warn(`[QUARTO ${reserva.quarto}] Erro ao enviar email:`, err.message);
   }
 
   return codigoTTLock;

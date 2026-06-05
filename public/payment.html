@@ -187,7 +187,8 @@
 
   <script type="module">
     import { db } from "./js/firebase.js";
-    import { collection, addDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+    import { gerarPinTTLock, validarIntervaloReserva, validarPinTTLock, calcularEstadoPin } from "./js/pin-utils.js";
+    import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
     // Video rotation
     const videos = document.querySelectorAll(".bg-video");
@@ -247,26 +248,48 @@
 
     // Create reservation in Firebase (WITHOUT TTLock code - will be generated at self check-in)
     async function createReservation() {
+      const validacaoDatas = validarIntervaloReserva(booking.entrada, booking.saida);
+      if (!validacaoDatas.ok) {
+        throw new Error(validacaoDatas.mensagem);
+      }
+
+      const codigoTTLock = gerarPinTTLock();
+      if (!validarPinTTLock(codigoTTLock)) {
+        throw new Error("Não foi possível gerar um PIN compatível com a TTLock.");
+      }
+
       const dadosReserva = {
         nome_hospede: booking.firstName + " " + booking.lastName,
+        primeiro_nome: booking.firstName,
+        ultimo_nome: booking.lastName,
         cc: booking.cc,
         email: booking.email,
         telefone: booking.phone,
         room_id: booking.quarto,
-        data_entrada: new Date(booking.entrada),
-        data_saida: new Date(booking.saida),
+        quarto: booking.quarto,
+        data_entrada: validacaoDatas.entrada,
+        data_saida: validacaoDatas.saida,
         hora_checkin: booking.hora_checkin,
         hora_checkout: booking.hora_checkout,
-        criado_em: new Date(),
+        data_criacao: serverTimestamp(),
+        criado_em: serverTimestamp(),
+        pin_criado_em: serverTimestamp(),
+        pin_ativo_em: null,
+        pin_expira_em: validacaoDatas.saida,
+        estado_pin: calcularEstadoPin(validacaoDatas.entrada, validacaoDatas.saida),
+        pin_origem: "gerado_localmente",
+        pin_regras: "1-7",
         status: "ativa",
         preco_noite: booking.roomPrice,
         total_pago: booking.total,
         extras: booking.extras,
-        pagamento: "confirmado"
+        pagamento: "confirmado",
+        codigo_ttlk: codigoTTLock
       };
 
       await addDoc(collection(db, "reservas"), dadosReserva);
       sessionStorage.removeItem("pendingBooking");
+      return codigoTTLock;
     }
 
     // Generate PDF Invoice
@@ -474,12 +497,39 @@
       }
     }
 
+    async function sendTTLockEmail(codigoTTLock) {
+      try {
+        const response = await fetch("/api/send-ttlock-code", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: booking.email,
+            guestName: booking.firstName + " " + booking.lastName,
+            code: codigoTTLock,
+            roomId: booking.quarto,
+            checkInDate: entradaDate.toLocaleDateString(lang === "pt" ? "pt-PT" : "en-US"),
+            checkOutDate: saidaDate.toLocaleDateString(lang === "pt" ? "pt-PT" : "en-US"),
+            language: lang === "pt" ? "pt" : "en"
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error("Erro ao enviar email do PIN");
+        }
+
+        console.log("✓ PIN enviado com sucesso para:", booking.email);
+      } catch (err) {
+        console.error("Erro ao enviar PIN:", err.message);
+        console.warn("O PIN foi guardado na reserva, mas o email pode ter falhado.");
+      }
+    }
+
     // Show success
-    async function showSuccess() {
+    async function showSuccess(codigoTTLock) {
       document.getElementById("paymentForm").style.display = "none";
       document.getElementById("paymentSuccess").classList.add("show");
-      document.getElementById("successCode").textContent = "✓ Fatura Enviada";
-      document.getElementById("successCode").style.fontSize = "1.2rem";
+      document.getElementById("successCode").textContent = `PIN TTLock: ${codigoTTLock}`;
+      document.getElementById("successCode").style.fontSize = "1.15rem";
       document.getElementById("successCode").style.fontWeight = "600";
       document.getElementById("successCode").style.color = "var(--success)";
       document.getElementById("successCode").style.background = "rgba(39, 174, 96, 0.1)";
@@ -489,11 +539,12 @@
         <strong>Check-in:</strong> ${entradaDate.toLocaleDateString('pt-PT', opts)} às ${booking.hora_checkin}<br>
         <strong>Check-out:</strong> ${saidaDate.toLocaleDateString('pt-PT', opts)} às ${booking.hora_checkout}<br>
         <strong>Total:</strong> ${booking.total.toFixed(2)}€<br><br>
-        <em>A sua fatura foi enviada para ${booking.email}</em>
+        <em>PIN guardado na reserva e fatura enviada para ${booking.email}</em>
       `;
 
       // Gerar e enviar fatura por email
       await sendInvoiceEmail();
+      await sendTTLockEmail(codigoTTLock);
     }
 
     // PayPal Buttons
@@ -519,8 +570,8 @@
         onApprove: async function(data, actions) {
           try {
             await actions.order.capture();
-            await createReservation();
-            await showSuccess();
+            const codigoTTLock = await createReservation();
+            await showSuccess(codigoTTLock);
           } catch (err) {
             console.error("Erro no pagamento PayPal:", err);
             alert(lang === "pt" ? "Erro ao processar o pagamento. Por favor tente novamente." : "Error processing payment. Please try again.");
@@ -541,7 +592,7 @@
       btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processando...';
 
       try {
-        await createReservation();
+        const codigoTTLock = await createReservation();
 
         if (method === 'mbway') {
           alert(lang === "pt"
@@ -550,7 +601,7 @@
         }
         // Transferência bancária: vai direto para página final sem alert
 
-        await showSuccess();
+        await showSuccess(codigoTTLock);
       } catch (err) {
         console.error("Erro ao criar reserva:", err);
         alert(lang === "pt" ? "Erro ao processar a reserva. Por favor tente novamente." : "Error processing reservation. Please try again.");

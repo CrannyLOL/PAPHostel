@@ -1,5 +1,7 @@
 import fetch from "node-fetch";
 import dotenv from "dotenv";
+import crypto from "crypto";
+import { gerarPinTTLock, validarPinTTLock } from "./pin-utils.js";
 
 dotenv.config();
 
@@ -31,15 +33,20 @@ export async function obterTokenTTLock() {
     return tokenCache.token;
   }
 
-  const url = "https://api.ttlock.com/oauth2/token";
+  const url = "https://euapi.ttlock.com/oauth2/token";
 
-  const params = new URLSearchParams({
-    clientId: process.env.TTLOCK_CLIENT_ID || "",
-    clientSecret: process.env.TTLOCK_CLIENT_SECRET || "",
-    username: process.env.TTLOCK_USERNAME || "",
-    password: process.env.TTLOCK_PASSWORD || "",
-    grant_type: "password"
-  });
+const md5Password = crypto
+  .createHash("md5")
+  .update(process.env.TTLOCK_PASSWORD || "")
+  .digest("hex");
+
+const params = new URLSearchParams({
+  clientId: process.env.TTLOCK_CLIENT_ID || "",
+  clientSecret: process.env.TTLOCK_CLIENT_SECRET || "",
+  username: process.env.TTLOCK_USERNAME || "",
+  password: md5Password,
+  grant_type: "password"
+});
 
   try {
     const response = await fetch(url, {
@@ -49,10 +56,11 @@ export async function obterTokenTTLock() {
 
     const data = await response.json();
 
-    if (!data.access_token) {
-      console.warn("TTLock: Credenciais inválidas, usando modo simulado");
-      return null;
-    }
+if (!data.access_token) {
+  console.log("RESPOSTA TTLOCK:");
+  console.log(data);
+  return null;
+}
 
     // Armazenar em cache por 50 minutos (token válido por 1 hora)
     tokenCache = {
@@ -87,11 +95,11 @@ export async function obterTokenTTLock() {
  * @returns {Promise<string>} Código de acesso gerado
  */
 export async function criarCodigoTTLock(token, lockId, inicio, fim) {
-  // MODO SIMULADO - Utilizado durante desenvolvimento
-  if (!token || !lockId || process.env.TTLOCK_MODE === "simulado") {
-    const codigoSimulado = gerarCodigoSimulado();
-    console.log(`TTLock: Código SIMULADO gerado - ${codigoSimulado} (Válido de ${inicio} até ${fim})`);
-    return codigoSimulado;
+  // MODO HÍBRIDO - Sem gateway, o PIN é gerado localmente e depois introduzido manualmente na app TTLock
+  if (process.env.TTLOCK_HAS_GATEWAY !== "1" || !token || !lockId || process.env.TTLOCK_MODE === "simulado") {
+    const pinLocal = gerarPinTTLock();
+    console.log(`TTLock: PIN local gerado - ${pinLocal} (Válido de ${inicio} até ${fim})`);
+    return pinLocal;
   }
 
   // MODO REAL - Integração real com fechadura TTLock
@@ -103,8 +111,7 @@ export async function criarCodigoTTLock(token, lockId, inicio, fim) {
  * @returns {string} Código de 6 dígitos
  */
 export function gerarCodigoSimulado() {
-  // Gera número aleatório entre 100000 e 999999
-  return Math.floor(100000 + Math.random() * 900000).toString();
+  return gerarPinTTLock();
 }
 
 /**
@@ -148,6 +155,10 @@ async function criarCodigoTTLockReal(token, lockId, inicio, fim) {
     // TTLock retorna errcode 0 para sucesso
     if (data.errcode !== 0) {
       throw new Error(`Erro TTLock: ${data.errmsg || "Código desconhecido"}`);
+    }
+
+    if (!validarPinTTLock(data.keyboardPwd)) {
+      throw new Error("TTLock devolveu um PIN inválido para esta instalação");
     }
 
     console.log(`TTLock: Código REAL gerado - ${data.keyboardPwd} (ID Fechadura: ${lockId})`);

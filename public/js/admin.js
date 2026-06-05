@@ -10,6 +10,7 @@
  */
 
 import { db } from "./firebase.js";
+import { calcularEstadoPin } from "./pin-utils.js";
 import {
   collection,
   getDocs,
@@ -210,7 +211,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (searchTerm) {
       filtered = filtered.filter(r =>
         (r.nome_hospede || "").toLowerCase().includes(searchTerm) ||
-        (r.room_id || "").toLowerCase().includes(searchTerm) ||
+        (r.room_id || r.quarto || "").toLowerCase().includes(searchTerm) ||
         (r.cc || "").toLowerCase().includes(searchTerm)
       );
     }
@@ -224,7 +225,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     let html = `<table><thead><tr>
       <th>Hóspede</th><th>CC</th><th>Quarto</th>
       <th>Check-in</th><th>Check-out</th>
-      <th>Código TTLock</th><th>Status</th><th></th>
+      <th>Código TTLock</th><th>Estado PIN</th><th>Status</th><th></th>
     </tr></thead><tbody>`;
 
     filtered.forEach(res => {
@@ -244,6 +245,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       } catch (e) { saida = String(res.data_saida); }
 
       const status = res.status || 'ativa';
+      const estadoPin = res.estado_pin || calcularEstadoPin(res.data_entrada, res.data_saida);
       
       // Mask CC number for security
       const ccMasked = res.cc ? res.cc.substring(0, 2) + " **** **** " + res.cc.substring(res.cc.length - 2) : '-';
@@ -251,10 +253,11 @@ document.addEventListener("DOMContentLoaded", async () => {
       html += `<tr>
         <td class="cell-name">${res.nome_hospede || '-'}</td>
         <td class="cell-cc">${ccMasked}</td>
-        <td><span class="cell-room"><i class="fas fa-door-open"></i> ${res.room_id || '-'}</span></td>
+        <td><span class="cell-room"><i class="fas fa-door-open"></i> ${res.room_id || res.quarto || '-'}</span></td>
         <td class="cell-date">${entrada}</td>
         <td class="cell-date">${saida}</td>
         <td><span class="cell-code">${res.codigo_ttlk || '-'}</span></td>
+        <td><span class="status ${estadoPin}">${estadoPin}</span></td>
         <td><span class="status ${status}">${status}</span></td>
         <td>
           <div class="row-actions">
@@ -281,7 +284,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (!confirm(confirmMsg)) return;
 
         try {
-          await updateDoc(doc(db, "reservas", id), { status: newStatus });
+          await updateDoc(doc(db, "reservas", id), {
+            status: newStatus,
+            estado_pin: "expirado",
+            pin_expira_em: new Date()
+          });
           await carregarTudo();
         } catch (err) {
           console.error("Erro ao atualizar reserva:", err);
@@ -318,6 +325,8 @@ document.addEventListener("DOMContentLoaded", async () => {
           try {
             await updateDoc(doc(db, "reservas", docRef.id), { 
               status: "finalizada",
+              estado_pin: "expirado",
+              pin_expira_em: new Date(),
               auto_updated: true,
               auto_updated_at: new Date()
             });
@@ -387,16 +396,18 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // Export reservations
   function getReservasExportData() {
-    const headers = ["Hóspede", "CC", "Email", "Telefone", "Quarto", "Check-in", "Check-out", "Código TTLock", "Status", "Preço/noite", "Total", "Extras", "Pagamento"];
+    const headers = ["Hóspede", "CC", "Email", "Telefone", "Quarto", "Check-in", "Check-out", "Código TTLock", "Estado PIN", "Criado em", "Status", "Preço/noite", "Total", "Extras", "Pagamento"];
     const rows = allReservas.map(r => [
       r.nome_hospede || "-",
       r.cc || "-",
       r.email || "-",
       r.telefone || "-",
-      r.room_id || "-",
+      r.room_id || r.quarto || "-",
       toDateStr(r.data_entrada),
       toDateStr(r.data_saida),
       r.codigo_ttlk || "-",
+      r.estado_pin || "pendente",
+      toDateStr(r.data_criacao || r.criado_em || r.pin_criado_em),
       r.status || "ativa",
       r.preco_noite != null ? r.preco_noite + "€" : "-",
       r.total_pago != null ? r.total_pago + "€" : "-",
