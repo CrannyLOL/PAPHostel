@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node server/index.js",
     "dev": "node server/index.js",
-    "build": "npm install"
+    "build": "echo \"No build step required\""
   },
   "keywords": ["hostel", "booking", "check-in", "express", "firebase"],
   "author": "",

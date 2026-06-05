@@ -25,7 +25,8 @@ app.use(express.static(path.join(__dirname, "../public")));
 
 // Email Mode (real ou log)
 const SMTP_CONFIGURED = !!(process.env.SMTP_USER && process.env.SMTP_PASS);
-const EMAIL_MODE = process.env.EMAIL_MODE || (SMTP_CONFIGURED ? "real" : "log");
+const IS_VERCEL = process.env.VERCEL === "1";
+const EMAIL_MODE = process.env.EMAIL_MODE || (IS_VERCEL ? "log" : (SMTP_CONFIGURED ? "real" : "log"));
 const SMTP_PORT = parseInt(process.env.SMTP_PORT || "587", 10);
 const SMTP_SECURE = process.env.SMTP_SECURE === "true" || SMTP_PORT === 465;
 
@@ -62,18 +63,20 @@ if (EMAIL_MODE === "real" && SMTP_CONFIGURED) {
     debug: true
   });
   
-  // Testar conexão com SMTP
-  transporter.verify((error, success) => {
-    if (error) {
-      console.error("❌ ERRO SMTP:", error.message);
-    } else {
-      console.log("✓ Conexão SMTP validada com sucesso!");
-    }
-  });
+  // No Vercel, evita validação de rede no arranque para não falhar o cold start.
+  if (!IS_VERCEL) {
+    transporter.verify((error, success) => {
+      if (error) {
+        console.error("❌ ERRO SMTP:", error.message);
+      } else {
+        console.log("✓ Conexão SMTP validada com sucesso!");
+      }
+    });
+  }
   
   console.log("✓ Email: Modo REAL - Emails serão enviados");
 } else {
-  if (process.env.VERCEL === "1") {
+  if (IS_VERCEL) {
     transporter = null;
     console.warn("⚠ Email: Vercel sem SMTP configurado. Os emails não serão enviados até definir EMAIL_MODE=real e as credenciais SMTP no painel da Vercel.");
   } else {

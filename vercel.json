@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "npm install",
+  "buildCommand": "npm run build",
   "devCommand": "npm run dev",
   "installCommand": "npm install",
   "functions": {
@@ -14,7 +14,7 @@
       "dest": "server/index.js"
     },
     {
-      "src": "/(?!api)(.*\.(?:html|css|js|json|png|jpg|jpeg|gif|svg|mp4|webp|woff|woff2|ttf))$",
+      "src": "/(?!api)(.*\\.(?:html|css|js|json|png|jpg|jpeg|gif|svg|mp4|webp|woff|woff2|ttf))$",
       "dest": "/public/$1"
     },
     {
