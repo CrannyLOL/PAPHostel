@@ -1,41 +1,49 @@
-# Environment variables
-.env
-.env.local
-.env.*.local
+# See https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
 
-# Dependencies
-node_modules/
-package-lock.json
-yarn.lock
+# compiled output
+dist
+tmp
+out-tsc
+*.tsbuildinfo
+.expo
+.expo-shared
 
-# Logging
-logs/
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+# dependencies
+node_modules
 
-# OS
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# misc
+/.sass-cache
+/connect.lock
+/coverage
+/libpeerconnection.log
+npm-debug.log
+yarn-error.log
+testem.log
+/typings
+
+# System Files
 .DS_Store
 Thumbs.db
 
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
+.cursor/rules/nx-rules.mdc
+.github/instructions/nx.instructions.md
 
-# Build
-dist/
-build/
-
-# Firebase
-serviceAccountKey.json
-
-# Vercel
-.vercel/
-
-# Backup files
-*.backup
-.vercel
+# Replit
+.cache/
+.local/
