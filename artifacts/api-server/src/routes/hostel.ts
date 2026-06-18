@@ -203,7 +203,9 @@ router.post("/generate-invoice-pdf", async (req, res) => {
     const { bookingData, language = "pt" } = req.body as {
       bookingData: {
         firstName: string;
-        lastName: string;
+        lastName?: string;
+        apelido?: string;
+        cc?: string;
         email: string;
         phone?: string;
         quarto: string;
@@ -211,6 +213,7 @@ router.post("/generate-invoice-pdf", async (req, res) => {
         saida: string;
         nights: number;
         roomPrice: number;
+        extras?: string[];
         extrasTotal?: number;
         total: number;
       };
@@ -221,63 +224,128 @@ router.post("/generate-invoice-pdf", async (req, res) => {
       return void res.status(400).json({ erro: true, mensagem: "Dados de reserva obrigatórios" });
     }
 
+    const apelido = bookingData.apelido || bookingData.lastName || "";
+    const nomeCompleto = `${bookingData.firstName} ${apelido}`.trim();
+    const ccPassaporte = bookingData.cc || "—";
+    const telefone = bookingData.phone || "—";
+    const extrasLista = (bookingData.extras || []).join(", ") || "—";
+    const subtotalAloj = (bookingData.roomPrice * bookingData.nights).toFixed(2);
+    const subtotalExtras = (bookingData.extrasTotal || 0).toFixed(2);
+    const refNum = Math.floor(10000000 + Math.random() * 89999999).toString();
+    const dataAtual = new Date().toLocaleDateString("pt-PT");
+    const dataEntrada = new Date(bookingData.entrada).toLocaleDateString("pt-PT");
+    const dataSaida = new Date(bookingData.saida).toLocaleDateString("pt-PT");
+
     // @ts-ignore
     const doc = new PDFDocument({ size: "A4", margin: 0 });
     const buffers: Buffer[] = [];
     doc.on("data", (chunk: Buffer) => buffers.push(chunk));
 
-    doc.rect(0, 0, 612, 120).fill("#2C3E50");
-    doc.fillColor("rgba(255,255,255,0.8)").fontSize(11).font("Helvetica");
-    doc.text("Guest House", 50, 48, { width: 250, align: "left" });
-    doc.text("Algarve, Portugal", 50, 65, { width: 250, align: "left" });
-    doc.fillColor("rgba(255,255,255,0.95)").fontSize(16).font("Helvetica-Bold");
-    doc.text(language === "pt" ? "FATURA" : "INVOICE", 400, 25, { width: 160, align: "right" });
-    doc.fillColor("rgba(255,255,255,0.75)").fontSize(10).font("Helvetica");
-    doc.text(`Data: ${new Date().toLocaleDateString(language === "pt" ? "pt-PT" : "en-US")}`, 400, 55, { width: 160, align: "right" });
-    doc.text(`Ref: ${Math.random().toString().substring(2, 10)}`, 400, 72, { width: 160, align: "right" });
+    const W = 595;
+    const MARGIN = 50;
+    const COL_LABEL = MARGIN + 10;
+    const COL_VALUE = 370;
 
-    let y = 145;
-    doc.fillColor("#2C3E50").fontSize(12).font("Helvetica-Bold");
-    doc.text(language === "pt" ? "HÓSPEDE / GUEST" : "GUEST", 50, y);
-    y += 25;
-    doc.fillColor("#333").fontSize(10).font("Helvetica");
-    doc.text(`${bookingData.firstName} ${bookingData.lastName}`, 50, y); y += 15;
-    doc.text(`Email: ${bookingData.email}`, 50, y); y += 15;
-    doc.text(`Telefone: ${bookingData.phone || "N/A"}`, 50, y); y += 25;
+    // ─── HEADER ─────────────────────────────────────────────────────────
+    let y = 50;
+    doc.font("Helvetica-Bold").fontSize(17).fillColor("#2C3E50");
+    doc.text("Golden Beach Guest House", MARGIN, y);
+    y += 23;
+    doc.font("Helvetica").fontSize(11).fillColor("#555");
+    doc.text("Algarve, Portugal", MARGIN, y);
 
-    doc.fillColor("#2C3E50").fontSize(12).font("Helvetica-Bold");
-    doc.text(language === "pt" ? "DETALHES DA RESERVA" : "BOOKING DETAILS", 50, y); y += 25;
-    doc.fillColor("#333").fontSize(10).font("Helvetica");
-    doc.text(`${language === "pt" ? "Quarto" : "Room"}: ${bookingData.quarto}`, 50, y); y += 15;
-    doc.text(`Check-in: ${new Date(bookingData.entrada).toLocaleDateString(language === "pt" ? "pt-PT" : "en-US")}`, 50, y); y += 15;
-    doc.text(`Check-out: ${new Date(bookingData.saida).toLocaleDateString(language === "pt" ? "pt-PT" : "en-US")}`, 50, y); y += 15;
-    doc.text(`${language === "pt" ? "Noites" : "Nights"}: ${bookingData.nights}`, 50, y); y += 35;
+    doc.font("Helvetica-Bold").fontSize(16).fillColor("#2C3E50");
+    doc.text("FATURA / RECIBO", MARGIN, 50, { width: W - 2 * MARGIN, align: "right" });
+    doc.font("Helvetica").fontSize(10).fillColor("#555");
+    doc.text(`Data: ${dataAtual}`, MARGIN, 71, { width: W - 2 * MARGIN, align: "right" });
+    doc.text(`Ref: ${refNum}`, MARGIN, 85, { width: W - 2 * MARGIN, align: "right" });
 
-    doc.strokeColor("#D4A843").lineWidth(2).moveTo(50, y).lineTo(562, y).stroke(); y += 20;
-    doc.fillColor("#2C3E50").fontSize(11).font("Helvetica-Bold");
-    doc.text(language === "pt" ? "DESCRIÇÃO" : "DESCRIPTION", 50, y);
-    doc.text(language === "pt" ? "VALOR" : "VALUE", 480, y, { width: 80, align: "right" }); y += 20;
-    doc.strokeColor("#DDD").lineWidth(1).moveTo(50, y).lineTo(562, y).stroke(); y += 15;
+    y = 115;
+    doc.strokeColor("#D4A843").lineWidth(1.5).moveTo(MARGIN, y).lineTo(W - MARGIN, y).stroke();
+    y += 22;
 
-    doc.fillColor("#333").fontSize(10).font("Helvetica");
-    const roomTotal = (bookingData.roomPrice * bookingData.nights).toFixed(2);
-    doc.text(`${language === "pt" ? "Alojamento" : "Accommodation"} (${bookingData.nights}x €${bookingData.roomPrice.toFixed(2)})`, 50, y);
-    doc.text(`€${roomTotal}`, 480, y, { width: 80, align: "right" }); y += 20;
+    // ─── DADOS DO HÓSPEDE ────────────────────────────────────────────────
+    doc.font("Helvetica-Bold").fontSize(13).fillColor("#2C3E50");
+    doc.text("Dados do Hóspede", MARGIN, y);
+    y += 20;
 
-    if (bookingData.extrasTotal && bookingData.extrasTotal > 0) {
-      doc.text("Extras", 50, y);
-      doc.text(`€${bookingData.extrasTotal.toFixed(2)}`, 480, y, { width: 80, align: "right" }); y += 20;
+    doc.font("Helvetica").fontSize(10).fillColor("#333");
+    doc.text(`Nome: ${nomeCompleto}`, MARGIN, y); y += 16;
+    doc.text(`CC/Passaporte: ${ccPassaporte}`, MARGIN, y); y += 16;
+    doc.text(`Email: ${bookingData.email}`, MARGIN, y); y += 16;
+    doc.text(`Telefone: ${telefone}`, MARGIN, y); y += 28;
+
+    // ─── DETALHES DA RESERVA ─────────────────────────────────────────────
+    doc.font("Helvetica-Bold").fontSize(13).fillColor("#2C3E50");
+    doc.text("Detalhes da Reserva", MARGIN, y);
+    y += 20;
+
+    doc.font("Helvetica-Bold").fontSize(10).fillColor("#2C3E50");
+    doc.text("Descrição", COL_LABEL, y);
+    doc.text("Detalhes", COL_VALUE, y);
+    y += 14;
+    doc.strokeColor("#999").lineWidth(0.5).moveTo(MARGIN, y).lineTo(W - MARGIN, y).stroke();
+    y += 10;
+
+    const tableRow = (label: string, value: string) => {
+      doc.font("Helvetica").fontSize(10).fillColor("#333");
+      doc.text(label, COL_LABEL, y);
+      doc.text(value, COL_VALUE, y, { width: W - MARGIN - COL_VALUE });
+      y += 18;
+    };
+
+    tableRow("Quarto", bookingData.quarto);
+    tableRow("Check-in", dataEntrada);
+    tableRow("Check-out", dataSaida);
+    tableRow("Noites", String(bookingData.nights));
+    tableRow("Preço por noite", `${bookingData.roomPrice.toFixed(2)}€`);
+
+    if (extrasLista !== "—") {
+      doc.font("Helvetica").fontSize(10).fillColor("#333");
+      doc.text("Extras", COL_LABEL, y);
+      const extrasH = doc.heightOfString(extrasLista, { width: W - MARGIN - COL_VALUE });
+      doc.text(extrasLista, COL_VALUE, y, { width: W - MARGIN - COL_VALUE });
+      y += Math.max(18, extrasH + 6);
     }
 
-    doc.strokeColor("#999").lineWidth(1).moveTo(50, y).lineTo(562, y).stroke(); y += 20;
-    doc.fillColor("#2980B9").fontSize(13).font("Helvetica-Bold");
-    doc.text(language === "pt" ? "TOTAL A PAGAR" : "TOTAL TO PAY", 50, y);
-    doc.text(`€${bookingData.total.toFixed(2)}`, 480, y, { width: 80, align: "right" }); y += 35;
+    y += 10;
+    doc.strokeColor("#DDD").lineWidth(0.5).moveTo(MARGIN, y).lineTo(W - MARGIN, y).stroke();
+    y += 14;
 
-    doc.strokeColor("#DDD").lineWidth(1).moveTo(50, y).lineTo(562, y).stroke(); y += 15;
-    doc.fillColor("#777").fontSize(8).font("Helvetica");
-    doc.text(`Gerado em: ${new Date().toLocaleString("pt-PT")}`, 50, y, { width: 512, align: "center" }); y += 12;
-    doc.text("Golden Beach Guest House © 2026", 50, y, { width: 512, align: "center" });
+    doc.font("Helvetica").fontSize(10).fillColor("#333");
+    doc.text("Subtotal Alojamento:", COL_LABEL, y);
+    doc.text(`${subtotalAloj}€`, MARGIN, y, { width: W - 2 * MARGIN, align: "right" });
+    y += 16;
+
+    if (parseFloat(subtotalExtras) > 0) {
+      doc.font("Helvetica").fontSize(10).fillColor("#333");
+      doc.text("Subtotal Extras:", COL_LABEL, y);
+      doc.text(`${subtotalExtras}€`, MARGIN, y, { width: W - 2 * MARGIN, align: "right" });
+      y += 16;
+    }
+
+    y += 8;
+    doc.strokeColor("#999").lineWidth(0.8).moveTo(MARGIN, y).lineTo(W - MARGIN, y).stroke();
+    y += 12;
+
+    doc.font("Helvetica-Bold").fontSize(13).fillColor("#2C3E50");
+    doc.text("TOTAL PAGO", COL_LABEL, y);
+    doc.text(`${bookingData.total.toFixed(2)}€`, MARGIN, y, { width: W - 2 * MARGIN, align: "right" });
+
+    // ─── FOOTER ──────────────────────────────────────────────────────────
+    const footerY = 715;
+    doc.strokeColor("#D4A843").lineWidth(1).moveTo(MARGIN, footerY).lineTo(W - MARGIN, footerY).stroke();
+
+    doc.font("Helvetica-Bold").fontSize(11).fillColor("#2C3E50");
+    doc.text("Obrigado por escolher a Golden Beach Guest House!", 0, footerY + 15, { width: W, align: "center" });
+    doc.font("Helvetica").fontSize(10).fillColor("#555");
+    doc.text("Desejamos-lhe uma estadia agradável no Algarve.", 0, footerY + 32, { width: W, align: "center" });
+    doc.text("Utilize o Self Check-in para obter o seu código de acesso TTLock.", 0, footerY + 48, { width: W, align: "center" });
+
+    doc.rect(0, 800, W, 42).fill("#2C3E50");
+    doc.font("Helvetica").fontSize(9).fillColor("#D4A843");
+    doc.text("Golden Beach Guest House  |  Algarve, Portugal  |  goldenbeach@hotel.com", 0, 814, { width: W, align: "center" });
+
     doc.end();
 
     await new Promise<void>((resolve) => doc.on("end", resolve));
@@ -286,7 +354,7 @@ router.post("/generate-invoice-pdf", async (req, res) => {
     res.json({
       sucesso: true,
       pdfBase64,
-      fileName: language === "pt" ? "Fatura_GoldenBeach.pdf" : "Invoice_GoldenBeach.pdf",
+      fileName: "Fatura_GoldenBeach.pdf",
     });
   } catch (error) {
     const err = error as Error;

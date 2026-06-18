@@ -135,7 +135,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         console.log("PIN TTLock gerado:", codigoTTLock);
 
         updateStatus(
-          lang === "pt" ? "Criando reserva..." : "Creating booking...",
+          lang === "pt" ? "A criar reserva..." : "Creating booking...",
           "loading"
         );
 
@@ -179,7 +179,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const idiomaCliente = obterIdiomaDeNacionalidade(bookingData.nationality || "português");
 
         updateStatus(
-          lang === "pt" ? "Gerando recibo..." : "Generating receipt...",
+          lang === "pt" ? "A gerar recibo..." : "Generating receipt...",
           "loading"
         );
 
@@ -228,42 +228,14 @@ document.addEventListener("DOMContentLoaded", async () => {
         const invoiceResponse = await emailInvoice.json();
         console.log("Email fatura:", invoiceResponse);
 
-        updateStatus(
-          lang === "pt" ? "Enviando código de acesso..." : "Sending access code...",
-          "loading"
-        );
-
-        // Enviar email com código TTLOCK (no idioma do cliente)
-        const emailTTLock = await fetch("/api/send-ttlock-code", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            email: bookingData.email,
-            guestName: bookingData.firstName,
-            code: codigoTTLock,
-            roomId: bookingData.quarto,
-            checkInDate: new Date(bookingData.entrada).toLocaleDateString(idiomaCliente === "pt" ? "pt-PT" : "en-US"),
-            checkOutDate: new Date(bookingData.saida).toLocaleDateString(idiomaCliente === "pt" ? "pt-PT" : "en-US"),
-            language: idiomaCliente
-          })
-        });
-
-        if (!emailTTLock.ok) {
-          const errorData = await emailTTLock.json();
-          throw new Error(`Email código: ${errorData.mensagem}`);
-        }
-
-        const ttlockResponse = await emailTTLock.json();
-        console.log("Email código TTLock:", ttlockResponse);
-
         // Limpar sessionStorage
         sessionStorage.removeItem("pendingBooking");
 
         // Sucesso
         updateStatus(
           lang === "pt" 
-            ? `✓ Reserva confirmada!\n\nPIN TTLock: ${codigoTTLock}\n\n📧 Fatura e PIN foram enviados para o seu email.` 
-            : `✓ Booking confirmed!\n\nTTLock PIN: ${codigoTTLock}\n\n📧 Invoice and PIN have been sent to your email.`,
+            ? `✓ Reserva confirmada!\n\n📧 A sua fatura foi enviada para o seu email.\n\nO código de acesso TTLock será enviado quando realizar o Self Check-in.` 
+            : `✓ Booking confirmed!\n\n📧 Your invoice has been sent to your email.\n\nYour TTLock access code will be sent when you complete Self Check-in.`,
           "success"
         );
 
