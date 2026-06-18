@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8">
+  <title>Golden Beach Guest House | Home</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="/img/logoIcone.png">
+  <link rel="stylesheet" href="css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+<link rel="stylesheet" href="css/responsive.css">  <link rel="stylesheet" href="css/navbar.css">  <link rel="stylesheet" href="css/index.css">
+  </head>
+<body>
+
+  <!-- Navbar -->
+  <div class="navbar">
+    <div class="navbar-left">
+      <img src="img/logo.png" alt="Logo" class="navbar-logo">
+    </div>
+    <div class="navbar-right">
+      <div class="language-selector">
+        <div class="language-buttons">
+          <button class="language-toggle" id="langBtnPt" title="Português">
+            <img src="img/Pt.png" alt="Português">
+          </button>
+          <button class="language-toggle" id="langBtnEn" title="English">
+            <img src="img/Uk.png" alt="English">
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hero Section with Video Background -->
+  <section class="hero">
+    <!-- Background Videos -->
+    <video class="bg-video active" autoplay muted loop playsinline>
+      <source src="video/Hotel_vid1.mp4" type="video/mp4">
+    </video>
+    <video class="bg-video" autoplay muted loop playsinline>
+      <source src="video/Hotel_vid2.mp4" type="video/mp4">
+    </video>
+    <video class="bg-video" autoplay muted loop playsinline>
+      <source src="video/Hotel_vid3.mp4" type="video/mp4">
+    </video>
+
+    <!-- Overlay -->
+    <div class="hero-overlay"></div>
+
+    <!-- Content -->
+    <div class="hero-content">
+      <h1 data-i18n="home-hero-title">Golden Beach Guest House</h1>
+      <p data-i18n="home-hero-subtitle">A sua casa na praia, a sua paz garantida</p>
+      <div class="cta-buttons">
+        <button class="btn-primary" onclick="window.location.href='selfcheckin.html'">
+          <i class="fas fa-door-open"></i> <span data-i18n="btn-check-in">Self Check-in</span>
+        </button>
+        <button class="btn-primary" onclick="window.location.href='booking.html'">
+          <i class="fas fa-calendar-check"></i> <span data-i18n="btn-booking">Criar Reserva</span>
+        </button>
+        <button class="btn-primary" onclick="window.location.href='login.html'">
+          <i class="fas fa-user"></i> <span data-i18n="btn-client-area">Área Cliente</span>
+        </button>
+        <button class="btn-secondary" onclick="window.location.href='register.html'">
+          <i class="fas fa-user-plus"></i> <span data-i18n="btn-register">Criar Conta</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section class="info-section">
+    <h2 class="section-title"><span data-i18n="home-about">Sobre Nós</span> </h2>
+    <div class="info-grid">
+      <div class="info-card">
+        <i class="fas fa-water"></i>
+        <h3 data-i18n="home-feature-beach">À Beira da Praia</h3>
+        <p data-i18n="home-feature-beach-desc">Situado entre as praias relaxantes de Faro e o parque natural da Ria Formosa</p>
+      </div>
+      <div class="info-card">
+        <i class="fas fa-wifi"></i>
+        <h3 data-i18n="home-feature-wifi">WiFi Grátis</h3>
+        <p data-i18n="home-feature-wifi-desc">Conexão de alta velocidade em todas as áreas da guesthouse</p>
+      </div>
+      <div class="info-card">
+        <i class="fas fa-utensils"></i>
+        <h3 data-i18n="home-feature-restaurant">Espaço Social</h3>
+        <p data-i18n="home-feature-restaurant-desc">Desfrute de momentos únicos com outros hóspedes num ambiente aconchegante</p>
+      </div>
+      <div class="info-card">
+        <i class="fas fa-concierge-bell"></i>
+        <h3 data-i18n="home-feature-service">Serviço Atencioso</h3>
+        <p data-i18n="home-feature-service-desc">Equipa disponível para tornar a sua estadia inesquecível</p>
+      </div>
+      <div class="info-card">
+        <i class="fas fa-shield-alt"></i>
+        <h3 data-i18n="home-feature-security">Seguro & Limpo</h3>
+        <p data-i18n="home-feature-security-desc">Seguimos as mais altas normas de segurança e higiene</p>
+      </div>
+      <div class="info-card">
+        <i class="fas fa-door-open"></i>
+        <h3>Self Check-in</h3>
+        <p data-i18n="home-feature-checkin-desc">Sistema automatizado para entrada rápida e conveniente 24/7</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Location Section -->
+  <section class="location-section">
+    <div class="location-grid">
+      <div class="location-content">
+        <h2 data-i18n="home-location">A Nossa Localização</h2>
+        <p data-i18n="home-location-desc">Uma guesthouse singular, localizada em Faro, entre praias relaxantes de areia dourada e o parque natural da Ria Formosa. O sítio perfeito para se conectar com a natureza e desfrutar de tranquilidade à beira-mar, com acesso fácil ao centro histórico de Faro.</p>
+        
+        <div class="location-details">
+          <strong><i class="fas fa-map-marker-alt"></i> <span data-i18n="home-address-label">Morada:</span></strong>
+          <span data-i18n="home-address">Golden Beach Guesthouse & Rooftop Bar, Av. Nascente Nº2, 8005-520 Faro, Portugal</span>
+        </div>
+        
+        <div class="location-details">
+          <strong><i class="fas fa-phone"></i> <span data-i18n="home-phone-label">Telefone:</span></strong>
+          <span><a href="tel:+351289001234" style="color: var(--text-dark); text-decoration: none;" data-i18n="home-phone">+351 289 001 234</a></span>
+        </div>
+        
+        <div class="location-details">
+          <strong><i class="fas fa-envelope"></i> <span data-i18n="home-email-label">Email:</span></strong>
+          <span><a href="mailto:info@goldenbeachfaro.com" style="color: var(--text-dark); text-decoration: none;" data-i18n="home-email">info@goldenbeachfaro.com</a></span>
+        </div>
+        
+        <div class="location-details">
+          <strong><i class="fas fa-clock"></i> <span data-i18n="home-schedule-label">Horário:</span></strong>
+          <span data-i18n="home-schedule">24/7 - Check-in: 15:00 | Check-out: 11:00</span>
+        </div>
+      </div>
+      
+      <div class="map-container">
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3165.4823652193885!2d-7.91955!3d37.01945!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd1ab3e5b9e5e5e5%3A0x5e5e5e5e5e5e5e5!2sAv.%20Nascente%202%2C%208005-520%20Faro!5e0!3m2!1 spt-PT!2spt!4v1700000000000" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      </div>
+    </div>
+  </section>
+
+  <!-- Safe & Clean Section --> 
+  <section class="safe-clean-section">
+    <div class="safe-clean-content">
+      <img src="img/Safe&Clean.png" alt="Safe & Clean" class="safe-clean-logo">
+      <h2>SAFE & CLEAN</h2>
+      <p data-i18n="home-safe-clean-desc">Exatamente, estamos a seguir todas as recomendações do selo Safe & Clean! O novo normal requer novos costumes. Adaptamo-nos e vamos garantir a segurança de todos. Esperamos por si para desfrutar incríveis dias de praia!</p>
+    </div>
+  </section>
+
+  <!-- Social Section -->
+  <section class="social-section">
+    <div class="social-content">
+      <h2 data-i18n="home-follow">Siga-nos</h2>
+      <p data-i18n="home-follow-desc">Fique atualizado com as nossas aventuras e novidades</p>
+      
+      <div class="social-links">
+        <a href="https://fb.com/goldenbeach.guesthouse/" target="_blank" class="social-icon" title="Facebook">
+          <i class="fab fa-facebook-f"></i>
+        </a>
+        <a href="https://instagr.am/goldenbeachguesthouse/" target="_blank" class="social-icon" title="Instagram">
+          <i class="fab fa-instagram"></i>
+        </a>
+        <a href="https://www.tiktok.com/@goldenbeachguesthouse" target="_blank" class="social-icon" title="TikTok">
+          <i class="fab fa-tiktok"></i>
+        </a>
+      </div>
+    </div>
+  </section>
+
+    <!-- Action Buttons Section -->
+  <section class="action-buttons-section">
+    <div class="action-buttons-container">
+      <button class="btn-action btn-action-admin" onclick="window.location.href='login-staff.html'">
+        <i class="fas fa-user-tie"></i> <span>Staff</span>
+      </button>
+      <button class="btn-action btn-action-admin" onclick="window.location.href='login-admin.html'">
+        <i class="fas fa-user-shield"></i> <span>Admin</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div style="margin-bottom: 15px;">
+      <strong>Golden Beach Guest House</strong><br>
+      <i class="fas fa-map-marker-alt"></i> Av. Nascente Nº2, 8005-520 Faro, Portugal<br>
+      <i class="fas fa-phone"></i> <a href="tel:+351289001234" style="color: rgba(255,255,255,0.8); text-decoration: none;">+351 289 001 234</a> | 
+      <i class="fas fa-envelope"></i> <a href="mailto:info@goldenbeachfaro.com" style="color: rgba(255,255,255,0.8); text-decoration: none;">info@goldenbeachfaro.com</a>
+    </div>
+    <p>&copy; 2025 Golden Beach Guest House. Todos os direitos reservados. | <a href="#">Política de Privacidade</a> | <a href="#">Termos e Condições</a></p>
+  </footer>
+
+  <script src="js/navbar-scroll.js"></script>
+  <script type="module" src="js/home.js"></script>
+</body>
+</html>
+
+
+
+

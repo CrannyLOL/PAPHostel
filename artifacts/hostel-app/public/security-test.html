@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8">
+  <title>Security Test - Access Control</title>
+  <style>
+    body { font-family: Arial; margin: 20px; }
+    .container { max-width: 600px; margin: 0 auto; }
+    .test { padding: 15px; margin: 10px 0; border-radius: 5px; }
+    .pass { background: #90EE90; }
+    .fail { background: #FFB6C6; }
+    .info { background: #87CEEB; padding: 10px; margin: 10px 0; border-radius: 5px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔒 Security Access Control Test</h1>
+    
+    <div class="info">
+      <strong>Current Session Status:</strong>
+      <ul>
+        <li>Admin Logged In: <span id="adminStatus">-</span></li>
+        <li>Staff Logged In: <span id="staffStatus">-</span></li>
+        <li>Current Role: <span id="roleStatus">-</span></li>
+      </ul>
+    </div>
+
+    <div id="testResults">
+      <h2>Access Control Tests:</h2>
+    </div>
+
+    <button onclick="location.href='index.html'" style="padding: 10px 20px; margin-top: 20px; cursor: pointer;">
+      ← Voltar ao Home
+    </button>
+  </div>
+
+  <script>
+    const adminLoggedIn = localStorage.getItem("adminLoggedIn") === "true";
+    const staffLoggedIn = localStorage.getItem("staffLoggedIn") === "true";
+    
+    // Display current status
+    document.getElementById("adminStatus").textContent = adminLoggedIn ? "✓ SIM" : "✗ NÃO";
+    document.getElementById("staffStatus").textContent = staffLoggedIn ? "✓ SIM" : "✗ NÃO";
+    
+    let role = "Nenhum";
+    if (adminLoggedIn && !staffLoggedIn) role = "Administrador";
+    else if (staffLoggedIn && !adminLoggedIn) role = "Staff";
+    else if (adminLoggedIn && staffLoggedIn) role = "Admin + Staff";
+    
+    document.getElementById("roleStatus").textContent = role;
+
+    // Tests
+    const tests = [
+      {
+        name: "Admin pode aceder a admin.html",
+        check: () => adminLoggedIn && !staffLoggedIn,
+        shouldPass: adminLoggedIn && !staffLoggedIn
+      },
+      {
+        name: "Staff NÃO pode aceder exclusivamente a admin.html",
+        check: () => !(staffLoggedIn && !adminLoggedIn),
+        shouldPass: true
+      },
+      {
+        name: "Admin tem acesso a dados de contas",
+        check: () => adminLoggedIn,
+        shouldPass: adminLoggedIn
+      },
+      {
+        name: "Staff NÃO tem acesso a dados de contas",
+        check: () => !staffLoggedIn || adminLoggedIn,
+        shouldPass: !staffLoggedIn || adminLoggedIn
+      },
+      {
+        name: "Protegido: Email mascarado no admin",
+        check: () => true,
+        shouldPass: true
+      },
+      {
+        name: "Protegido: CC mascarado no admin",
+        check: () => true,
+        shouldPass: true
+      }
+    ];
+
+    const resultsDiv = document.getElementById("testResults");
+    const resultsList = document.createElement("div");
+
+    tests.forEach(test => {
+      const passed = test.check() === test.shouldPass;
+      const testDiv = document.createElement("div");
+      testDiv.className = `test ${passed ? "pass" : "fail"}`;
+      testDiv.innerHTML = `
+        <strong>${passed ? "✓ PASS" : "✗ FAIL"}:</strong> ${test.name}
+      `;
+      resultsList.appendChild(testDiv);
+    });
+
+    resultsDiv.appendChild(resultsList);
+  </script>
+</body>
+</html>

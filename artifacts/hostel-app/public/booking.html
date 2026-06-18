@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8">
+  <title>Golden Beach Guest House | Reservas</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="/img/logoIcone.png">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+<link rel="stylesheet" href="css/responsive.css">
+  <link rel="stylesheet" href="css/navbar.css">
+  <link rel="stylesheet" href="css/booking.css">
+  </head>
+<body>
+
+  <!-- Vídeos de fundo -->
+  <video class="bg-video active" autoplay muted loop playsinline>
+    <source src="video/Hotel_vid1.mp4" type="video/mp4">
+  </video>
+  <video class="bg-video" autoplay muted loop playsinline>
+    <source src="video/Hotel_vid2.mp4" type="video/mp4">
+  </video>
+  <video class="bg-video" autoplay muted loop playsinline>
+    <source src="video/Hotel_vid3.mp4" type="video/mp4">
+  </video>
+
+  <!-- Navbar -->
+  <div class="navbar">
+    <div class="navbar-left">
+      <a href="index.html" style="display: flex; align-items: center;">
+        <img src="img/logo.png" alt="Logo" class="navbar-logo">
+      </a>
+    </div>
+    <div class="navbar-right">
+      <div class="language-selector">
+        <div class="language-buttons">
+          <button class="language-toggle" id="langBtnPt" title="Português">
+            <img src="img/Pt.png" alt="Português">
+          </button>
+          <button class="language-toggle" id="langBtnEn" title="English">
+            <img src="img/Uk.png" alt="English">
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="overlay">
+    <div class="container">
+
+      <div class="booking-header">
+        <h1 data-i18n="booking-h1">Reservar</h1>
+        <p data-i18n="booking-subtitle">Escolha o seu quarto e garanta a sua estadia</p>
+      </div>
+
+      <!-- Steps -->
+      <div class="steps">
+        <div class="step active" id="step1Indicator">
+          <span class="step-number">1</span>
+          <span data-i18n="step-dates">Datas</span>
+        </div>
+        <div class="step" id="step2Indicator">
+          <span class="step-number">2</span>
+          <span data-i18n="step-room">Quarto</span>
+        </div>
+        <div class="step" id="step3Indicator">
+          <span class="step-number">3</span>
+          <span data-i18n="step-details">Detalhes</span>
+        </div>
+      </div>
+
+      <form id="bookingForm">
+
+        <!-- STEP 1: Calendar -->
+        <div class="booking-section" id="sectionDates">
+          <h2 class="section-heading">
+            <i class="fas fa-calendar-alt"></i>
+            <span data-i18n="section-select-dates">Selecione as Datas</span>
+          </h2>
+
+          <div class="calendar-wrapper">
+            <div class="calendar-box" id="calendarMonth1"></div>
+            <div class="calendar-box" id="calendarMonth2"></div>
+          </div>
+
+          <div class="date-summary">
+            <div class="date-summary-item">
+              <label>Check-in</label>
+              <div class="value empty" id="checkinDisplay" data-i18n="select-date-placeholder">Selecione no calendário</div>
+            </div>
+            <div class="date-summary-item">
+              <label>Check-out</label>
+              <div class="value empty" id="checkoutDisplay" data-i18n="select-date-placeholder">Selecione no calendário</div>
+            </div>
+            <div class="date-summary-item">
+              <label data-i18n="label-nights">Noites</label>
+              <div class="value" id="nightsDisplay">0</div>
+            </div>
+          </div>
+
+          <div class="time-selectors">
+            <div class="time-group">
+              <label data-i18n="label-checkin-time"><i class="fas fa-clock"></i> Hora de Check-in</label>
+              <select id="checkinTime">
+                <option value="14:00">14:00</option>
+                <option value="15:00" selected>15:00</option>
+                <option value="16:00">16:00</option>
+                <option value="17:00">17:00</option>
+                <option value="18:00">18:00</option>
+                <option value="19:00">19:00</option>
+                <option value="20:00">20:00</option>
+                <option value="21:00">21:00</option>
+                <option value="22:00">22:00</option>
+                <option value="23:00">23:00</option>
+                <option value="00:00">00:00</option>
+              </select>
+            </div>
+            <div class="time-group">
+              <label data-i18n="label-checkout-time"><i class="fas fa-clock"></i> Hora de Check-out</label>
+              <select id="checkoutTime">
+                <option value="08:00">08:00</option>
+                <option value="09:00">09:00</option>
+                <option value="10:00">10:00</option>
+                <option value="11:00" selected>11:00</option>
+                <option value="12:00">12:00</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 2: Room Selection -->
+        <div class="booking-section" id="sectionRooms">
+          <h2 class="section-heading">
+            <i class="fas fa-bed"></i>
+            <span data-i18n="section-select-room">Escolha o Quarto</span>
+          </h2>
+
+          <!-- Twin Rooms -->
+          <div class="room-type-section">
+            <div class="room-type-title">
+              <i class="fas fa-bed"></i> <span data-i18n="room-type-twin">Quartos Twin</span>
+            </div>
+            <div class="rooms-grid">
+
+              <div class="room-card" data-room="Quarto Castelo Twin" data-type="twin" data-price="45" onclick="selectRoom(this)">
+                <div class="room-image-container">
+                  <img src="img/QuartoCasteloTwin.png" alt="Quarto Castelo Twin">
+                  <span class="room-type-badge">Twin</span>
+                  <span class="room-select-badge"><i class="fas fa-check"></i></span>
+                </div>
+                <div class="room-content">
+                  <h3 class="room-name">Quarto Castelo</h3>
+                  <p class="room-description">Quarto acolhedor com vista para o castelo, decoração temática e ambiente tranquilo.</p>
+                  <ul class="room-features">
+                    <li><i class="fas fa-users"></i> 2 <span data-i18n="people">pessoas</span></li>
+                    <li><i class="fas fa-bed"></i> 2 <span data-i18n="single-beds">camas individuais</span></li>
+                    <li><i class="fas fa-wifi"></i> Wi-Fi</li>
+                    <li><i class="fas fa-shower"></i> <span data-i18n="private-bath">Casa de banho privada</span></li>
+                  </ul>
+                  <div class="room-price">45€ <span>/ noite</span></div>
+                </div>
+              </div>
+
+              <div class="room-card" data-room="Quarto Cavacos Twin" data-type="twin" data-price="42" onclick="selectRoom(this)">
+                <div class="room-image-container">
+                  <img src="img/QuartoCavacosTwin.png" alt="Quarto Cavacos Twin">
+                  <span class="room-type-badge">Twin</span>
+                  <span class="room-select-badge"><i class="fas fa-check"></i></span>
+                </div>
+                <div class="room-content">
+                  <h3 class="room-name">Quarto Cavacos</h3>
+                  <p class="room-description">Inspirado na Praia dos Cavacos, com tons de azul e branco e muita luz natural.</p>
+                  <ul class="room-features">
+                    <li><i class="fas fa-users"></i> 2 <span data-i18n="people">pessoas</span></li>
+                    <li><i class="fas fa-bed"></i> 2 <span data-i18n="single-beds">camas individuais</span></li>
+                    <li><i class="fas fa-wifi"></i> Wi-Fi</li>
+                    <li><i class="fas fa-shower"></i> <span data-i18n="private-bath">Casa de banho privada</span></li>
+                  </ul>
+                  <div class="room-price">42€ <span>/ noite</span></div>
+                </div>
+              </div>
+
+              <div class="room-card" data-room="Quarto Manta Rota Twin" data-type="twin" data-price="40" onclick="selectRoom(this)">
+                <div class="room-image-container">
+                  <img src="img/QuartoMantaRotaTwin.png" alt="Quarto Manta Rota Twin">
+                  <span class="room-type-badge">Twin</span>
+                  <span class="room-select-badge"><i class="fas fa-check"></i></span>
+                </div>
+                <div class="room-content">
+                  <h3 class="room-name">Quarto Manta Rota</h3>
+                  <p class="room-description">Ambiente praiano com decoração inspirada na famosa Praia da Manta Rota.</p>
+                  <ul class="room-features">
+                    <li><i class="fas fa-users"></i> 2 <span data-i18n="people">pessoas</span></li>
+                    <li><i class="fas fa-bed"></i> 2 <span data-i18n="single-beds">camas individuais</span></li>
+                    <li><i class="fas fa-wifi"></i> Wi-Fi</li>
+                    <li><i class="fas fa-shower"></i> <span data-i18n="private-bath">Casa de banho privada</span></li>
+                  </ul>
+                  <div class="room-price">40€ <span>/ noite</span></div>
+                </div>
+              </div>
+
+              <div class="room-card" data-room="Quarto Marinha Twin" data-type="twin" data-price="44" onclick="selectRoom(this)">
+                <div class="room-image-container">
+                  <img src="img/QuartoMarinhaTwin.png" alt="Quarto Marinha Twin">
+                  <span class="room-type-badge">Twin</span>
+                  <span class="room-select-badge"><i class="fas fa-check"></i></span>
+                </div>
+                <div class="room-content">
+                  <h3 class="room-name">Quarto Marinha</h3>
+                  <p class="room-description">Inspirado na Praia da Marinha, com tons dourados e conforto à beira-mar.</p>
+                  <ul class="room-features">
+                    <li><i class="fas fa-users"></i> 2 <span data-i18n="people">pessoas</span></li>
+                    <li><i class="fas fa-bed"></i> 2 <span data-i18n="single-beds">camas individuais</span></li>
+                    <li><i class="fas fa-wifi"></i> Wi-Fi</li>
+                    <li><i class="fas fa-shower"></i> <span data-i18n="private-bath">Casa de banho privada</span></li>
+                  </ul>
+                  <div class="room-price">44€ <span>/ noite</span></div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Double Rooms -->
+          <div class="room-type-section">
+            <div class="room-type-title">
+              <i class="fas fa-bed"></i> <span data-i18n="room-type-double">Quartos Duplo</span>
+            </div>
+            <div class="rooms-grid">
+
+              <div class="room-card" data-room="Quarto Alvor Duplo" data-type="duplo" data-price="55" onclick="selectRoom(this)">
+                <div class="room-image-container">
+                  <img src="img/QuartoAlvorDuplo.png" alt="Quarto Alvor Duplo">
+                  <span class="room-type-badge">Duplo</span>
+                  <span class="room-select-badge"><i class="fas fa-check"></i></span>
+                </div>
+                <div class="room-content">
+                  <h3 class="room-name">Quarto Alvor</h3>
+                  <p class="room-description">Quarto duplo espaçoso com vista e decoração inspirada na vila de Alvor.</p>
+                  <ul class="room-features">
+                    <li><i class="fas fa-users"></i> 2 <span data-i18n="people">pessoas</span></li>
+                    <li><i class="fas fa-bed"></i> <span data-i18n="double-bed">Cama de casal</span></li>
+                    <li><i class="fas fa-wifi"></i> Wi-Fi</li>
+                    <li><i class="fas fa-shower"></i> <span data-i18n="private-bath">Casa de banho privada</span></li>
+                  </ul>
+                  <div class="room-price">55€ <span>/ noite</span></div>
+                </div>
+              </div>
+
+              <div class="room-card" data-room="Quarto Benagil Duplo" data-type="duplo" data-price="58" onclick="selectRoom(this)">
+                <div class="room-image-container">
+                  <img src="img/QuartoBenagilDuplo.png" alt="Quarto Benagil Duplo">
+                  <span class="room-type-badge">Duplo</span>
+                  <span class="room-select-badge"><i class="fas fa-check"></i></span>
+                </div>
+                <div class="room-content">
+                  <h3 class="room-name">Quarto Benagil</h3>
+                  <p class="room-description">Inspirado na gruta de Benagil, com tons naturais e ambiente relaxante.</p>
+                  <ul class="room-features">
+                    <li><i class="fas fa-users"></i> 2 <span data-i18n="people">pessoas</span></li>
+                    <li><i class="fas fa-bed"></i> <span data-i18n="double-bed">Cama de casal</span></li>
+                    <li><i class="fas fa-wifi"></i> Wi-Fi</li>
+                    <li><i class="fas fa-shower"></i> <span data-i18n="private-bath">Casa de banho privada</span></li>
+                  </ul>
+                  <div class="room-price">58€ <span>/ noite</span></div>
+                </div>
+              </div>
+
+              <div class="room-card" data-room="Quarto Ilha da Fuseta Duplo" data-type="duplo" data-price="52" onclick="selectRoom(this)">
+                <div class="room-image-container">
+                  <img src="img/QuartoIlhaFusetaDuplo.png" alt="Quarto Ilha da Fuseta Duplo">
+                  <span class="room-type-badge">Duplo</span>
+                  <span class="room-select-badge"><i class="fas fa-check"></i></span>
+                </div>
+                <div class="room-content">
+                  <h3 class="room-name">Quarto Ilha da Fuseta</h3>
+                  <p class="room-description">Decoração costeira inspirada na Ilha da Fuseta, perfeito para relaxar.</p>
+                  <ul class="room-features">
+                    <li><i class="fas fa-users"></i> 2 <span data-i18n="people">pessoas</span></li>
+                    <li><i class="fas fa-bed"></i> <span data-i18n="double-bed">Cama de casal</span></li>
+                    <li><i class="fas fa-wifi"></i> Wi-Fi</li>
+                    <li><i class="fas fa-shower"></i> <span data-i18n="private-bath">Casa de banho privada</span></li>
+                  </ul>
+                  <div class="room-price">52€ <span>/ noite</span></div>
+                </div>
+              </div>
+
+              <div class="room-card" data-room="Quarto Trafal Duplo" data-type="duplo" data-price="50" onclick="selectRoom(this)">
+                <div class="room-image-container">
+                  <img src="img/QuartoTrafalDuplo.png" alt="Quarto Trafal Duplo">
+                  <span class="room-type-badge">Duplo</span>
+                  <span class="room-select-badge"><i class="fas fa-check"></i></span>
+                </div>
+                <div class="room-content">
+                  <h3 class="room-name">Quarto Trafal</h3>
+                  <p class="room-description">Quarto confortável com temática da Praia do Trafal e tons quentes.</p>
+                  <ul class="room-features">
+                    <li><i class="fas fa-users"></i> 2 <span data-i18n="people">pessoas</span></li>
+                    <li><i class="fas fa-bed"></i> <span data-i18n="double-bed">Cama de casal</span></li>
+                    <li><i class="fas fa-wifi"></i> Wi-Fi</li>
+                    <li><i class="fas fa-shower"></i> <span data-i18n="private-bath">Casa de banho privada</span></li>
+                  </ul>
+                  <div class="room-price">50€ <span>/ noite</span></div>
+                </div>
+              </div>
+
+              <div class="room-card" data-room="Quarto Três Irmãos Duplo" data-type="duplo" data-price="60" onclick="selectRoom(this)">
+                <div class="room-image-container">
+                  <img src="img/QuartoTresIrmaosDuplo.png" alt="Quarto Três Irmãos Duplo">
+                  <span class="room-type-badge">Duplo</span>
+                  <span class="room-select-badge"><i class="fas fa-check"></i></span>
+                </div>
+                <div class="room-content">
+                  <h3 class="room-name">Quarto Três Irmãos</h3>
+                  <p class="room-description">O nosso quarto premium, inspirado na icónica Praia dos Três Irmãos.</p>
+                  <ul class="room-features">
+                    <li><i class="fas fa-users"></i> 2 <span data-i18n="people">pessoas</span></li>
+                    <li><i class="fas fa-bed"></i> <span data-i18n="double-bed">Cama de casal</span></li>
+                    <li><i class="fas fa-wifi"></i> Wi-Fi</li>
+                    <li><i class="fas fa-shower"></i> <span data-i18n="private-bath">Casa de banho privada</span></li>
+                  </ul>
+                  <div class="room-price">60€ <span>/ noite</span></div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 3: Guest Details & Summary -->
+        <div class="booking-section" id="sectionDetails">
+          <h2 class="section-heading">
+            <i class="fas fa-user"></i>
+            <span data-i18n="booking-form-title">Detalhes da Reserva</span>
+          </h2>
+
+          <div style="background: rgba(41,128,185,0.1); border-left: 4px solid #2980B9; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
+            <p style="margin: 0; color: var(--primary-dark); font-size: 0.9rem; font-weight: 500;">
+              <i class="fas fa-info-circle"></i> <span data-i18n="booking-login-info">Utilize as mesmas credenciais que usou na criação da conta (Nome, Apelido e Palavra-passe)</span>
+            </p>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label data-i18n="register-firstname">Nome *</label>
+              <input type="text" id="firstName" name="firstName" required>
+            </div>
+            <div class="form-group">
+              <label data-i18n="register-lastname">Apelido *</label>
+              <input type="text" id="lastName" name="lastName" required>
+            </div>
+            <div class="form-group">
+              <label data-i18n="register-password">Palavra-passe *</label>
+              <input type="password" id="bookingPassword" name="bookingPassword" required>
+            </div>
+            <div class="form-group">
+              <label data-i18n="register-email">Email *</label>
+              <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+              <label data-i18n="label-cc-booking">Cartão de Cidadão *</label>
+              <input type="text" id="cc" name="cc" required>
+            </div>
+            <div class="form-group">
+              <label data-i18n="label-phone-booking">Telefone *</label>
+              <input type="tel" id="phone" name="phone" required>
+            </div>
+          </div>
+
+          <!-- Extras -->
+          <div style="margin-top: 25px;">
+            <h3 class="section-heading" style="font-size: 1.2rem;">
+              <i class="fas fa-concierge-bell"></i>
+              <span data-i18n="extras-title">Extras & Serviços</span>
+            </h3>
+            <div class="extras-grid">
+              <label class="extra-item">
+                <input type="checkbox" name="extra-breakfast" value="8">
+                <div>
+                  <div class="extra-name" data-i18n="extra-breakfast">Pequeno-almoço</div>
+                  <div class="extra-price">+8€ /<span data-i18n="per-person-day">pessoa/dia</span></div>
+                </div>
+              </label>
+              <label class="extra-item">
+                <input type="checkbox" name="extra-parking" value="5">
+                <div>
+                  <div class="extra-name" data-i18n="extra-parking">Estacionamento privado</div>
+                  <div class="extra-price">+5€ /<span data-i18n="per-day">dia</span></div>
+                </div>
+              </label>
+              <label class="extra-item">
+                <input type="checkbox" name="extra-airport" value="15">
+                <div>
+                  <div class="extra-name" data-i18n="extra-airport">Transfer aeroporto</div>
+                  <div class="extra-price">+15€ /<span data-i18n="per-trip">viagem</span></div>
+                </div>
+              </label>
+              <label class="extra-item">
+                <input type="checkbox" name="extra-late-checkout" value="10">
+                <div>
+                  <div class="extra-name" data-i18n="extra-late-checkout">Late check-out (até 14h)</div>
+                  <div class="extra-price">+10€</div>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Summary -->
+          <div class="booking-summary" style="margin-top: 25px;">
+            <h3 class="summary-title" data-i18n="summary-title">Resumo da Reserva</h3>
+            <div class="summary-item">
+              <span class="summary-label" data-i18n="summary-room">Quarto:</span>
+              <span class="summary-value" id="summaryRoom">-</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Check-in:</span>
+              <span class="summary-value" id="summaryCheckin">-</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Check-out:</span>
+              <span class="summary-value" id="summaryCheckout">-</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label" data-i18n="summary-nights">Noites:</span>
+              <span class="summary-value" id="summaryNights">0</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label" data-i18n="summary-extras">Extras:</span>
+              <span class="summary-value" id="summaryExtras">0€</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label" data-i18n="summary-total">Total:</span>
+              <span class="summary-value" id="summaryTotal">0€</span>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-booking" data-i18n="btn-booking">Proceder ao Pagamento</button>
+        </div>
+
+        <!-- Hidden fields for form data -->
+        <input type="hidden" id="entrada" name="entrada">
+        <input type="hidden" id="saida" name="saida">
+        <input type="hidden" id="quarto" name="quarto">
+      </form>
+
+    </div>
+  </div>
+
+  <script src="js/navbar-scroll.js"></script>
+  <script type="module" src="js/booking.js"></script>
+  <script type="module">
+    import { db } from "./js/firebase.js";
+    import { collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+    // ====== GLOBAL STATE ======
+    let checkinDate = null;
+    let checkoutDate = null;
+    let selectingCheckout = false;
+    let currentMonth1 = new Date();
+    let currentMonth2 = new Date();
+    currentMonth2.setMonth(currentMonth2.getMonth() + 1);
+    let selectedRoom = null;
+    let blockedData = []; // { data_inicio, data_fim, quartos[] }
+    let activeReservations = []; // { room_id, data_entrada, data_saida }
+
+    const lang = localStorage.getItem("language") || "pt";
+    const monthNames = lang === "pt"
+      ? ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"]
+      : ["January","February","March","April","May","June","July","August","September","October","November","December"];
+    const dayNames = lang === "pt"
+      ? ["Seg","Ter","Qua","Qui","Sex","Sáb","Dom"]
+      : ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+
+    // ====== LOAD BLOCKED DATES AND RESERVATIONS ======
+    async function loadBlocksAndReservations() {
+      try {
+        const bloqueiosSnap = await getDocs(collection(db, "bloqueios"));
+        blockedData = [];
+        bloqueiosSnap.forEach(d => blockedData.push(d.data()));
+
+        const reservasSnap = await getDocs(query(collection(db, "reservas"), where("status", "==", "ativa")));
+        activeReservations = [];
+        reservasSnap.forEach(d => {
+          const r = d.data();
+          let entrada = r.data_entrada;
+          let saida = r.data_saida;
+          if (entrada && typeof entrada.toDate === 'function') entrada = entrada.toDate();
+          else if (typeof entrada === 'string') entrada = new Date(entrada);
+          if (saida && typeof saida.toDate === 'function') saida = saida.toDate();
+          else if (typeof saida === 'string') saida = new Date(saida);
+          activeReservations.push({ room_id: r.room_id, data_entrada: entrada, data_saida: saida });
+        });
+      } catch (err) {
+        console.error("Erro ao carregar bloqueios/reservas:", err);
+      }
+    }
+
+    // Check if a specific date is blocked for ANY room
+    function isDateBlockedForAnyRoom(date) {
+      const dateStr = date.toISOString().split('T')[0];
+      return blockedData.some(b => dateStr >= b.data_inicio && dateStr <= b.data_fim);
+    }
+
+    // Check if a specific room is blocked on a specific date
+    function isRoomBlockedOnDate(roomName, date) {
+      const dateStr = date.toISOString().split('T')[0];
+      return blockedData.some(b => {
+        if (dateStr >= b.data_inicio && dateStr <= b.data_fim) {
+          return b.quartos.includes(roomName);
+        }
+        return false;
+      });
+    }
+
+    // Check if a room is occupied (by reservation) for a date range
+    function isRoomOccupiedInRange(roomName, startDate, endDate) {
+      return activeReservations.some(r => {
+        if (r.room_id !== roomName) return false;
+        const rStart = new Date(r.data_entrada); rStart.setHours(0,0,0,0);
+        const rEnd = new Date(r.data_saida); rEnd.setHours(0,0,0,0);
+        const sStart = new Date(startDate); sStart.setHours(0,0,0,0);
+        const sEnd = new Date(endDate); sEnd.setHours(0,0,0,0);
+        return sStart < rEnd && sEnd > rStart;
+      });
+    }
+
+    // Check if a room is blocked in a date range
+    function isRoomBlockedInRange(roomName, startDate, endDate) {
+      const sStart = new Date(startDate); sStart.setHours(0,0,0,0);
+      const sEnd = new Date(endDate); sEnd.setHours(0,0,0,0);
+      for (let d = new Date(sStart); d < sEnd; d.setDate(d.getDate() + 1)) {
+        if (isRoomBlockedOnDate(roomName, d)) return true;
+      }
+      return false;
+    }
+
+    // ====== CALENDAR RENDERING ======
+    function renderCalendars() {
+      renderMonth("calendarMonth1", currentMonth1);
+      renderMonth("calendarMonth2", currentMonth2);
+    }
+
+    function renderMonth(containerId, date) {
+      const container = document.getElementById(containerId);
+      const year = date.getFullYear();
+      const month = date.getMonth();
+      const today = new Date();
+      today.setHours(0,0,0,0);
+
+      const firstDay = new Date(year, month, 1);
+      let startDay = firstDay.getDay() - 1;
+      if (startDay < 0) startDay = 6;
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+      let html = `
+        <div class="calendar-nav">
+          <button type="button" onclick="window._prevMonth()"><i class="fas fa-chevron-left"></i></button>
+          <h3>${monthNames[month]} ${year}</h3>
+          <button type="button" onclick="window._nextMonth()"><i class="fas fa-chevron-right"></i></button>
+        </div>
+        <div class="calendar-grid">
+      `;
+
+      dayNames.forEach(d => {
+        html += `<div class="cal-header">${d}</div>`;
+      });
+
+      for (let i = 0; i < startDay; i++) {
+        html += `<div class="cal-day other-month"></div>`;
+      }
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const d = new Date(year, month, day);
+        d.setHours(0,0,0,0);
+        let classes = "cal-day";
+        let label = "";
+        let isBlocked = isDateBlockedForAnyRoom(d);
+
+        if (d < today) {
+          classes += " disabled";
+        } else if (isBlocked) {
+          classes += " blocked";
+        }
+        if (d.getTime() === today.getTime()) {
+          classes += " today";
+        }
+        if (checkinDate && d.getTime() === checkinDate.getTime()) {
+          classes += " check-in";
+          label = `<span class="date-label">Check-in</span>`;
+        }
+        if (checkoutDate && d.getTime() === checkoutDate.getTime()) {
+          classes += " check-out";
+          label = `<span class="date-label">Check-out</span>`;
+        }
+        if (checkinDate && checkoutDate && d > checkinDate && d < checkoutDate) {
+          classes += " in-range";
+        }
+
+        const clickable = (d >= today && !isBlocked) ? `onclick="window._pickDate(${year},${month},${day})"` : "";
+        html += `<div class="${classes}" ${clickable}>${day}${label}</div>`;
+      }
+
+      html += `</div>`;
+      container.innerHTML = html;
+    }
+
+    window._pickDate = function(year, month, day) {
+      const d = new Date(year, month, day);
+      d.setHours(0,0,0,0);
+
+      if (!selectingCheckout || !checkinDate || d <= checkinDate) {
+        checkinDate = d;
+        checkoutDate = null;
+        selectingCheckout = true;
+      } else {
+        checkoutDate = d;
+        selectingCheckout = false;
+      }
+
+      updateDateDisplay();
+      renderCalendars();
+      updateRoomAvailability();
+      updateSummary();
+    };
+
+    function updateDateDisplay() {
+      const opts = { day: '2-digit', month: '2-digit', year: 'numeric' };
+      const ciEl = document.getElementById("checkinDisplay");
+      const coEl = document.getElementById("checkoutDisplay");
+      const nightsEl = document.getElementById("nightsDisplay");
+
+      if (checkinDate) {
+        ciEl.textContent = checkinDate.toLocaleDateString(lang === "pt" ? "pt-PT" : "en-GB", opts);
+        ciEl.classList.remove("empty");
+        const checkinTime = document.getElementById("checkinTime").value;
+        document.getElementById("entrada").value = formatDateTime(checkinDate, checkinTime);
+      } else {
+        ciEl.textContent = lang === "pt" ? "Selecione no calendário" : "Select on calendar";
+        ciEl.classList.add("empty");
+      }
+
+      if (checkoutDate) {
+        coEl.textContent = checkoutDate.toLocaleDateString(lang === "pt" ? "pt-PT" : "en-GB", opts);
+        coEl.classList.remove("empty");
+        const checkoutTime = document.getElementById("checkoutTime").value;
+        document.getElementById("saida").value = formatDateTime(checkoutDate, checkoutTime);
+      } else {
+        coEl.textContent = lang === "pt" ? "Selecione no calendário" : "Select on calendar";
+        coEl.classList.add("empty");
+      }
+
+      if (checkinDate && checkoutDate) {
+        const nights = Math.ceil((checkoutDate - checkinDate) / (1000*60*60*24));
+        nightsEl.textContent = nights;
+      } else {
+        nightsEl.textContent = "0";
+      }
+    }
+
+    function formatDateTime(date, time) {
+      const y = date.getFullYear();
+      const m = String(date.getMonth() + 1).padStart(2, '0');
+      const d = String(date.getDate()).padStart(2, '0');
+      return `${y}-${m}-${d}T${time}`;
+    }
+
+    window._prevMonth = function() {
+      currentMonth1.setMonth(currentMonth1.getMonth() - 1);
+      currentMonth2.setMonth(currentMonth2.getMonth() - 1);
+      renderCalendars();
+    };
+
+    window._nextMonth = function() {
+      currentMonth1.setMonth(currentMonth1.getMonth() + 1);
+      currentMonth2.setMonth(currentMonth2.getMonth() + 1);
+      renderCalendars();
+    };
+
+    // ====== ROOM AVAILABILITY ======
+    function updateRoomAvailability() {
+      document.querySelectorAll('.room-card').forEach(card => {
+        const roomName = card.dataset.room;
+        card.classList.remove('occupied');
+        const existingBadge = card.querySelector('.occupied-badge');
+        if (existingBadge) existingBadge.remove();
+
+        if (checkinDate && checkoutDate) {
+          const isOccupied = isRoomOccupiedInRange(roomName, checkinDate, checkoutDate);
+          const isBlocked = isRoomBlockedInRange(roomName, checkinDate, checkoutDate);
+
+          if (isOccupied || isBlocked) {
+            card.classList.add('occupied');
+            card.classList.remove('selected');
+            if (selectedRoom === roomName) {
+              selectedRoom = null;
+              document.getElementById("quarto").value = "";
+            }
+            const badge = document.createElement('div');
+            badge.className = 'occupied-badge';
+            badge.textContent = isBlocked
+              ? (lang === "pt" ? "Bloqueado" : "Blocked")
+              : (lang === "pt" ? "Ocupado nesta data" : "Occupied on this date");
+            card.style.position = 'relative';
+            card.appendChild(badge);
+          }
+        }
+      });
+    }
+
+    // ====== ROOM SELECTION ======
+    window.selectRoom = function(card) {
+      if (card.classList.contains('occupied')) return;
+      document.querySelectorAll('.room-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      selectedRoom = card.dataset.room;
+      document.getElementById("quarto").value = selectedRoom;
+      updateSummary();
+
+      document.getElementById("step2Indicator").classList.add("completed");
+      document.getElementById("step3Indicator").classList.add("active");
+    };
+
+    // ====== SUMMARY ======
+    function updateSummary() {
+      const nights = (checkinDate && checkoutDate)
+        ? Math.ceil((checkoutDate - checkinDate) / (1000*60*60*24)) : 0;
+
+      document.getElementById("summaryRoom").textContent = selectedRoom || "-";
+
+      const opts = { day: '2-digit', month: '2-digit', year: 'numeric' };
+      const locale = lang === "pt" ? "pt-PT" : "en-GB";
+      const ciTime = document.getElementById("checkinTime").value;
+      const coTime = document.getElementById("checkoutTime").value;
+
+      document.getElementById("summaryCheckin").textContent = checkinDate
+        ? `${checkinDate.toLocaleDateString(locale, opts)} ${ciTime}` : "-";
+      document.getElementById("summaryCheckout").textContent = checkoutDate
+        ? `${checkoutDate.toLocaleDateString(locale, opts)} ${coTime}` : "-";
+      document.getElementById("summaryNights").textContent = nights;
+
+      // Room price
+      let roomPrice = 0;
+      if (selectedRoom) {
+        const selectedCard = document.querySelector(`.room-card[data-room="${selectedRoom}"]`);
+        if (selectedCard) roomPrice = parseFloat(selectedCard.dataset.price) || 0;
+      }
+      const roomTotal = roomPrice * nights;
+
+      let extrasTotal = 0;
+      document.querySelectorAll('.extras-grid input[type="checkbox"]:checked').forEach(cb => {
+        const val = parseFloat(cb.value);
+        if (cb.name === 'extra-breakfast' || cb.name === 'extra-parking') {
+          extrasTotal += val * nights;
+        } else {
+          extrasTotal += val;
+        }
+      });
+
+      document.getElementById("summaryExtras").textContent = extrasTotal.toFixed(2) + "€";
+      document.getElementById("summaryTotal").textContent = (roomTotal + extrasTotal).toFixed(2) + "€";
+
+      if (checkinDate && checkoutDate) {
+        document.getElementById("step1Indicator").classList.add("completed");
+        document.getElementById("step2Indicator").classList.add("active");
+      }
+    }
+
+    // Event listeners
+    document.getElementById("checkinTime").addEventListener("change", () => { updateDateDisplay(); updateSummary(); });
+    document.getElementById("checkoutTime").addEventListener("change", () => { updateDateDisplay(); updateSummary(); });
+    document.querySelectorAll('.extras-grid input[type="checkbox"]').forEach(cb => {
+      cb.addEventListener("change", updateSummary);
+    });
+
+    // Init
+    await loadBlocksAndReservations();
+    renderCalendars();
+  </script>
+
+</body>
+</html>
+
+
+
+

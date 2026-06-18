@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8">
+  <title>Golden Beach Guest House | Login Utilizador</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="/img/logoIcone.png">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <link rel="stylesheet" href="css/navbar.css">
+  <link rel="stylesheet" href="css/login-admin.css">
+</head>
+<body>
+  <!-- Videos de fundo -->
+  <video class="bg-video active" autoplay muted loop>
+    <source src="video/Hotel_vid1.mp4" type="video/mp4">
+  </video>
+
+  <video class="bg-video" autoplay muted loop>
+    <source src="video/Hotel_vid2.mp4" type="video/mp4">
+  </video>
+
+  <video class="bg-video" autoplay muted loop>
+    <source src="video/Hotel_vid3.mp4" type="video/mp4">
+  </video>
+
+  <!-- Conteúdo -->
+  <div class="overlay">
+    <div class="card">
+      <div class="card-header">
+        <a href="index.html">
+          <img src="img/logo.png" alt="Logo">
+        </a>
+        <h1>Minha Conta</h1>
+        <p>Golden Beach Guest House</p>
+      </div>
+
+      <div class="error" id="errorMsg"></div>
+      <div class="success" id="successMsg"></div>
+
+      <form id="loginForm">
+        <label>Email</label>
+        <input type="email" id="email" required placeholder="seu.email@example.com">
+
+        <label>Palavra-passe</label>
+        <input type="password" id="password" required placeholder="••••••••">
+
+        <button type="submit" id="loginBtn">Entrar</button>
+
+        <div class="loading" id="loading">
+          <div class="spinner"></div>
+          <p>A autenticar...</p>
+        </div>
+      </form>
+
+      <div class="back-link">
+        <a href="index.html">← Voltar ao Home</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/navbar-scroll.js"></script>
+  <script type="module">
+    import { auth } from "./js/firebase.js";
+    import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+    const loginForm = document.getElementById("loginForm");
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
+    const loginBtn = document.getElementById("loginBtn");
+    const errorMsg = document.getElementById("errorMsg");
+    const successMsg = document.getElementById("successMsg");
+    const loading = document.getElementById("loading");
+
+    // Rotação de vídeos
+    const videos = document.querySelectorAll(".bg-video");
+    let videoAtual = 0;
+
+    videos.forEach(video => {
+      video.playbackRate = 0.5;
+    });
+
+    setInterval(() => {
+      videos[videoAtual].classList.remove("active");
+      videoAtual = (videoAtual + 1) % videos.length;
+      videos[videoAtual].classList.add("active");
+    }, 10000);
+
+    // Login
+    loginForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      errorMsg.style.display = "none";
+      successMsg.style.display = "none";
+      loading.style.display = "block";
+      loginBtn.disabled = true;
+
+      try {
+        const userCredential = await signInWithEmailAndPassword(
+          auth,
+          emailInput.value,
+          passwordInput.value
+        );
+
+        // Successful login
+        successMsg.textContent = "Login bem-sucedido! Redirecionando...";
+        successMsg.style.display = "block";
+
+        localStorage.setItem("userEmail", userCredential.user.email);
+
+        setTimeout(() => {
+          window.location.href = "client.html";
+        }, 1500);
+      } catch (error) {
+        errorMsg.style.display = "block";
+
+        if (error.code === "auth/user-not-found") {
+          errorMsg.textContent = "Utilizador não encontrado. Verifique o email.";
+        } else if (error.code === "auth/wrong-password") {
+          errorMsg.textContent = "Palavra-passe incorreta. Tente novamente.";
+        } else if (error.code === "auth/invalid-email") {
+          errorMsg.textContent = "Email inválido. Tente novamente.";
+        } else if (error.code === "auth/user-disabled") {
+          errorMsg.textContent = "Esta conta foi desativada.";
+        } else {
+          errorMsg.textContent = error.message || "Erro ao fazer login. Tente novamente.";
+        }
+
+        loading.style.display = "none";
+        loginBtn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>

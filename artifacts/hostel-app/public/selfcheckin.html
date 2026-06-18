@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8">
+  <title>Golden Beach Guest House | Self Check-in</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="/img/logoIcone.png">
+  <link rel="stylesheet" href="css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+<link rel="stylesheet" href="css/responsive.css">
+  <link rel="stylesheet" href="css/navbar.css">
+  <link rel="stylesheet" href="css/selfcheckin.css">
+  </head>
+<body>
+
+  <!-- 🎥 Vídeos de fundo -->
+  <video class="bg-video active" autoplay muted loop playsinline>
+    <source src="video/Hotel_vid1.mp4" type="video/mp4">
+  </video>
+
+  <video class="bg-video" autoplay muted loop playsinline>
+    <source src="video/Hotel_vid2.mp4" type="video/mp4">
+  </video>
+
+  <video class="bg-video" autoplay muted loop playsinline>
+    <source src="video/Hotel_vid3.mp4" type="video/mp4">
+  </video>
+
+  <!-- Navbar -->
+  <div class="navbar">
+    <div class="navbar-left">
+      <a href="index.html" style="display: flex; align-items: center;">
+        <img src="img/logo.png" alt="Logo" class="navbar-logo">
+      </a>
+    </div>
+    <div class="navbar-right">
+      <div class="language-selector">
+        <div class="language-buttons">
+          <button class="language-toggle" id="langBtnPt" title="Português">
+            <img src="img/Pt.png" alt="Português">
+          </button>
+          <button class="language-toggle" id="langBtnEn" title="English">
+            <img src="img/Uk.png" alt="English">
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Conteúdo -->
+  <div class="overlay">
+    <div class="card">
+      <div class="logo-container">
+        <img src="img/logo.png" alt="Golden Beach Guest House" class="logo">
+      </div>
+
+      <h1>Golden Beach</h1>
+      <p class="subtitle" data-i18n="subtitle">Self Check-in</p>
+
+      <form id="checkinForm">
+        <div class="form-group">
+          <label class="label-hospede" data-i18n="register-firstname">Nome *</label>
+          <input type="text" id="nome" name="nome" required>
+        </div>
+
+        <div class="form-group">
+          <label data-i18n="register-lastname">Apelido *</label>
+          <input type="text" id="apelido" name="apelido" required>
+        </div>
+
+        <div class="form-group">
+          <label class="label-cc" data-i18n="label-cc">Cartão de Cidadão *</label>
+          <input type="text" id="cc" name="cc" required>
+        </div>
+
+        <!-- Div para múltiplas reservas (aparece se houver) -->
+        <div id="multiReservasContainer" style="display: none;">
+          <div class="form-group">
+            <label data-i18n="select-quartos">Selecione os Quartos *</label>
+            <div id="quartosCheckbox"></div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-checkin" data-i18n="btn-checkin">Check-in</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/navbar-scroll.js"></script>
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
+
+
+
+
